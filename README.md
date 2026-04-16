@@ -1,159 +1,291 @@
-# Turborepo starter
+Full System Architecture — myDB (Managed Database Platform)
 
-This Turborepo starter is maintained by the Turborepo core team.
+A multi-tenant database platform built on PostgreSQL using schema-based isolation. It provides instant REST APIs and SDKs for developers to interact with their data, integrated with MuAuth for authentication and user management.
 
-## Using this example
+1. High-Level Overview
 
-Run the following command:
+myDB is a SaaS platform where:
 
-```sh
-npx create-turbo@latest
-```
+Users authenticate via MuAuth
+Users create projects
+Each project gets an isolated PostgreSQL schema
+Users can create tables and manage data
+APIs are auto-generated
+SDK is provided for easy integration
+Core Flow
+User → MuAuth → myDB API → PostgreSQL (Cloud SQL)
+├── proj_1 schema
+├── proj_2 schema
+└── proj_n schema
+Core Components
+API Gateway (NestJS)
+Auth Integration (MuAuth)
+Project Service
+Schema Manager
+Query Engine (core)
+Table Service
+API Key Service
+SDK (client)
+PostgreSQL (Cloud SQL)
+Cache (Redis - optional later) 2. Architecture (Service-Level)
+Client (Frontend / Backend)
+↓
+SDK / REST API
+↓
+API Gateway (NestJS)
+↓
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+| Project Service |
+| Table Service |
+| Query Engine |
+| Auth Middleware (MuAuth) |
 
-### Apps and Packages
+---
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+        ↓
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+PostgreSQL (Single DB)
+↓
+Schemas (per project) 3. Monorepo Structure (NestJS)
 
-### Utilities
+Use a monorepo for scalability and code sharing.
 
-This Turborepo has some additional tools already setup for you:
+mydb/
+├── apps/
+│ ├── api/ # Main NestJS API
+│ │ ├── src/
+│ │ │ ├── modules/
+│ │ │ │ ├── auth/
+│ │ │ │ ├── projects/
+│ │ │ │ ├── tables/
+│ │ │ │ ├── data/
+│ │ │ │ ├── api-keys/
+│ │ │ │ └── health/
+│ │ │ ├── common/
+│ │ │ │ ├── decorators/
+│ │ │ │ ├── guards/
+│ │ │ │ ├── interceptors/
+│ │ │ │ └── filters/
+│ │ │ ├── config/
+│ │ │ ├── main.ts
+│ │ │ └── app.module.ts
+│ │ └── tsconfig.json
+│
+│ ├── worker/ # Background jobs (future)
+│ │ └── src/
+│
+│ └── sdk/ # JS/TS SDK
+│ └── src/
+│ ├── client.ts
+│ ├── query-builder.ts
+│ └── index.ts
+│
+├── packages/
+│ ├── db/ # DB connection & helpers
+│ │ ├── src/
+│ │ │ ├── connection.ts
+│ │ │ ├── schema-manager.ts
+│ │ │ └── query-runner.ts
+│
+│ ├── core/ # Query engine (MOST IMPORTANT)
+│ │ ├── src/
+│ │ │ ├── query-engine.ts
+│ │ │ ├── builders/
+│ │ │ │ ├── select.builder.ts
+│ │ │ │ ├── insert.builder.ts
+│ │ │ │ ├── update.builder.ts
+│ │ │ │ └── delete.builder.ts
+│ │ │ └── validators/
+│
+│ ├── types/
+│ │ └── src/
+│
+│ ├── utils/
+│ │ └── src/
+│
+│ └── config/
+│ └── src/
+│
+├── infra/
+│ ├── docker/
+│ ├── kubernetes/
+│ └── terraform/
+│
+├── .env
+├── package.json
+├── tsconfig.base.json
+└── README.md 4. Core Modules (NestJS)
+4.1 Auth Module
+Integrates with MuAuth
+Validates JWT
+Extracts user and project context
+4.2 Project Module
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+Responsibilities:
 
-### Build
+Create project
+Generate API key
+Create schema
+Example Flow
+POST /projects
+→ validate user (MuAuth)
+→ generate projectId
+→ CREATE SCHEMA proj_x
+→ store metadata
+→ return API key
+4.3 Table Module
 
-To build all apps and packages, run the following command:
+Responsibilities:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+Create tables dynamically
+Validate schema
+Example
+POST /tables
+{
+"tableName": "users",
+"columns": [
+{ "name": "id", "type": "uuid" },
+{ "name": "email", "type": "text" }
+]
+}
+4.4 Data Module (Query API)
 
-```sh
-cd my-turborepo
-turbo build
-```
+This is powered by the query engine.
 
-Without global `turbo`, use your package manager:
+Example APIs
+GET /data/:table
+POST /data/:table
+PATCH /data/:table
+DELETE /data/:table
+Flow:
+Request → Validate API Key → Resolve Schema → Build Query → Execute → Return 5. Query Engine (Core System)
 
-```sh
-cd my-turborepo
-npx turbo build
-npm dlx turbo build
-npm exec turbo build
-```
+This is the most important part of your system.
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Responsibilities
+Convert API requests → SQL
+Prevent SQL injection
+Support:
+select
+insert
+update
+delete
+filters
+pagination (later)
+joins (later)
+Example
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+Input:
 
-```sh
-turbo build --filter=docs
-```
+{
+"table": "users",
+"filter": { "email": "test@mail.com" }
+}
 
-Without global `turbo`:
+Output:
 
-```sh
-npx turbo build --filter=docs
-npm exec turbo build --filter=docs
-npm exec turbo build --filter=docs
-```
+SELECT \* FROM proj_123.users WHERE email = $1; 6. Database Design
+Main Tables (public schema)
+projects
 
-### Develop
+- id
+- user_id
+- schema_name
+- api_key
+- created_at
 
-To develop all apps and packages, run the following command:
+api_keys
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+- id
+- project_id
+- key_hash
+- created_at
+  Tenant Data
+  proj_123.users
+  proj_123.orders
 
-```sh
-cd my-turborepo
-turbo dev
-```
+7. API Design
+   Project APIs
+   POST /projects
+   GET /projects
+   Table APIs
+   POST /tables
+   GET /tables
+   Data APIs
+   GET /data/:table
+   POST /data/:table
+   PATCH /data/:table
+   DELETE /data/:table
+   Headers
+   Authorization: Bearer <MuAuth JWT>
+   x-api-key: mydb_sk_xxx
+8. SDK Design
+   Initialization
+   createClient({
+   apiKey: "mydb_sk_xxx",
+   baseUrl: "https://api.mydb.com"
+   });
+   Usage
+   db.from("users").select();
+   db.from("users").insert({ email: "test@mail.com" });
+   Flow
+   SDK → REST API → Query Engine → PostgreSQL
+9. Security
+   Must implement:
+   API key hashing
+   JWT validation via MuAuth
+   schema isolation
+   parameterized queries
+   request validation (Zod or class-validator)
+   Prevent:
+   SQL injection
+   cross-schema access
+   unrestricted queries
+10. Scaling Strategy
+    V1
+    Single DB
+    Multiple schemas
+    Single API instance
+    V2
+    Add Redis caching
+    Add read replicas
+    V3
+    Migrate heavy tenants to separate DB
+11. Deployment
+    Backend
+    NestJS (Docker)
+    Deploy on:
+    GCP Cloud Run or
+    Kubernetes
+    Database
+    GCP Cloud SQL (PostgreSQL)
+12. Development Roadmap
+    Phase 1
+    Project creation
+    Schema creation
+    Basic CRUD APIs
+    Phase 2
+    SDK
+    Filters
+    Pagination
+    Phase 3
+    Relations
+    Joins
+    Performance optimization
+13. Key Design Principles
+    API-first architecture
+    Schema-based multi-tenancy
+    Strong abstraction layer (Query Engine)
+    Secure by default
+    Easy developer experience
+    Final Summary
 
-Without global `turbo`, use your package manager:
+myDB is a developer platform where:
 
-```sh
-cd my-turborepo
-npx turbo dev
-npm exec turbo dev
-npm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-npm exec turbo dev --filter=web
-npm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-npm exec turbo login
-npm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-npm exec turbo link
-npm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Each project maps to a PostgreSQL schema
+APIs are auto-generated
+SDK simplifies usage
+Query engine abstracts SQL
+MuAuth handles authentication
