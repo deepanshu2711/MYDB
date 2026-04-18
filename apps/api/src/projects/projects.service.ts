@@ -15,11 +15,13 @@ export class ProjectsService {
       'INSERT INTO projects(name,password) VALUES($1,$2) RETURNING *',
       [createProjectDto.name, hashedPassword],
     );
-    console.log('project details', res.rows[0]);
-    // await initializeDatabaseSchema(
-    //   `${createProjectDto.name}-${res.rows[0].id}`,
-    //   createProjectDto.password,
-    // );
+
+    //NOTE:  initialize schema, create user and grant permissions
+    await initializeDatabaseSchema(
+      `${createProjectDto.name}-${res.rows[0].id.slice(0, 4)}`,
+      createProjectDto.password,
+    );
+
     return res.rows[0];
   }
 
