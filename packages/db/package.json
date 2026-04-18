@@ -1,0 +1,24 @@
+{
+  "name": "@repo/db",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "node-pg-migrate": "^8.0.4",
+    "pg": "^8.13.3"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/pg": "^8.11.11",
+    "typescript": "^5"
+  }
+}
