@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { Pool, schemaManager } from '@repo/db';
+import { Pool, initializeDatabaseSchema } from '@repo/db';
 
 @Injectable()
 export class ProjectsService {
@@ -16,7 +16,7 @@ export class ProjectsService {
       [createProjectDto.name, hashedPassword],
     );
     console.log('project details', res.rows[0]);
-    // await schemaManager(
+    // await initializeDatabaseSchema(
     //   `${createProjectDto.name}-${res.rows[0].id}`,
     //   createProjectDto.password,
     // );

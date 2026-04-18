@@ -1,6 +1,9 @@
 import { pool } from ".";
 
-export const schemaManager = async (schemaName: string, password: string) => {
+export const initializeDatabaseSchema = async (
+  schemaName: string,
+  password: string,
+) => {
   const safeName = `"${schemaName.replace(/"/g, '""')}"`;
   const dbUser = `${schemaName}_user`;
   const safeUser = `"${dbUser.replace(/"/g, '""')}"`;
