@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -8,9 +9,11 @@ export class ProjectsService {
   constructor(@Inject('PG_POOL') private pool: Pool) {}
 
   async create(createProjectDto: CreateProjectDto) {
+    const hashedPassword = await bcrypt.hash(createProjectDto.password, 10);
+
     const res = await this.pool.query(
-      'INSERT INTO projects(name) VALUES($1) RETURNING *',
-      [createProjectDto.name],
+      'INSERT INTO projects(name,password) VALUES($1,$2) RETURNING *',
+      [createProjectDto.name, hashedPassword],
     );
     return res.rows[0];
   }

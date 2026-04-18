@@ -5,3 +5,4 @@ export const pool = new Pool({
 });
 
 export { Pool };
+export { schemaManager } from "./schema-manager";

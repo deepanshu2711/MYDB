@@ -9,20 +9,8 @@ export const shorthands = undefined;
  * @returns {Promise<void> | void}
  */
 export const up = (pgm) => {
-  pgm.createExtension("pgcrypto", { ifNotExists: true });
-  pgm.createTable("projects", {
-    id: {
-      type: "uuid",
-      primaryKey: true,
-      default: pgm.func("gen_random_uuid()"),
-    },
-
-    name: { type: "text", notNull: true },
-
-    created_at: {
-      type: "timestamp",
-      default: pgm.func("current_timestamp"),
-    },
+  pgm.addColumn("projects", {
+    password: { type: "text" },
   });
 };
 
@@ -32,5 +20,5 @@ export const up = (pgm) => {
  * @returns {Promise<void> | void}
  */
 export const down = (pgm) => {
-  pgm.dropTable("users");
+  pgm.dropColumn("projects", "password");
 };
