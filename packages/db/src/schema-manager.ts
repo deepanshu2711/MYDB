@@ -4,12 +4,11 @@ export const initializeDatabaseSchema = async (
   schemaName: string,
   password: string,
 ) => {
-  const safeName = `"${schemaName.replace(/"/g, '""')}"`;
   const dbUser = `${schemaName}_user`;
   const safeUser = `"${dbUser.replace(/"/g, '""')}"`;
 
   try {
-    await pool.query(`CREATE SCHEMA ${safeName}`);
+    await pool.query(`CREATE SCHEMA ${schemaName}`);
 
     const { rows } = await pool.query("SELECT current_database()");
     const dbName = rows[0].current_database;
@@ -17,14 +16,14 @@ export const initializeDatabaseSchema = async (
     await pool.query(`CREATE USER ${safeUser} WITH PASSWORD '${password}'`);
     await pool.query(`GRANT CONNECT ON DATABASE "${dbName}" TO ${safeUser}`);
     await pool.query(
-      `GRANT ALL PRIVILEGES ON SCHEMA ${safeName} TO ${safeUser}`,
+      `GRANT ALL PRIVILEGES ON SCHEMA ${schemaName} TO ${safeUser}`,
     );
     await pool.query(
-      `ALTER DEFAULT PRIVILEGES IN SCHEMA ${safeName} GRANT ALL ON TABLES TO ${safeUser}`,
+      `ALTER DEFAULT PRIVILEGES IN SCHEMA ${schemaName} GRANT ALL ON TABLES TO ${safeUser}`,
     );
 
     await pool.query(`
-      CREATE TABLE ${safeName}._tables (
+      CREATE TABLE ${schemaName}._tables (
         id SERIAL PRIMARY KEY,
         name TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW()
@@ -32,9 +31,9 @@ export const initializeDatabaseSchema = async (
     `);
 
     await pool.query(`
-      CREATE TABLE ${safeName}._columns (
+      CREATE TABLE ${schemaName}._columns (
         id SERIAL PRIMARY KEY,
-        table_id INT REFERENCES ${safeName}._tables(id),
+        table_id INT REFERENCES ${schemaName}._tables(id),
         name TEXT NOT NULL,
         type TEXT NOT NULL,
         nullable BOOLEAN DEFAULT true,
@@ -50,7 +49,6 @@ export const initializeDatabaseSchema = async (
       error,
     });
 
-    // rethrow so caller can handle rollback / retry
     throw error;
   }
 };

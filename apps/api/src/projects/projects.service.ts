@@ -3,6 +3,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Pool, initializeDatabaseSchema } from '@repo/db';
+import { createSchemaName } from './projects.utils';
 
 @Injectable()
 export class ProjectsService {
@@ -10,17 +11,15 @@ export class ProjectsService {
 
   async create(createProjectDto: CreateProjectDto) {
     const hashedPassword = await bcrypt.hash(createProjectDto.password, 10);
+    const schema_name = createSchemaName(createProjectDto.name);
 
     const res = await this.pool.query(
-      'INSERT INTO projects(name,password) VALUES($1,$2) RETURNING *',
-      [createProjectDto.name, hashedPassword],
+      'INSERT INTO projects(name,password,schema_name) VALUES($1,$2,$3) RETURNING *',
+      [createProjectDto.name, hashedPassword, schema_name],
     );
 
     //NOTE:  initialize schema, create user and grant permissions
-    await initializeDatabaseSchema(
-      `${createProjectDto.name}-${res.rows[0].id.slice(0, 4)}`,
-      createProjectDto.password,
-    );
+    await initializeDatabaseSchema(schema_name, createProjectDto.password);
 
     return res.rows[0];
   }
