@@ -2,36 +2,36 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { TablesService } from './tables.service';
 import { CreateTableDto } from './dto/create-table.dto';
 
-@Controller('projects/:projectId/tables')
+@Controller('projects/:schemaName/tables')
 export class TablesController {
   constructor(private readonly tablesService: TablesService) {}
 
   @Post()
   create(
-    @Param('projectId') projectId: string,
+    @Param('schemaName') schemaName: string,
     @Body() createTableDto: CreateTableDto,
   ) {
-    return this.tablesService.create(projectId, createTableDto);
+    return this.tablesService.create(schemaName, createTableDto);
   }
 
   @Get()
-  list(@Param('projectId') projectId: string) {
-    return this.tablesService.findAll(projectId);
+  list(@Param('schemaName') schemaName: string) {
+    return this.tablesService.findAll(schemaName);
   }
 
   @Get(':tableName')
   describe(
-    @Param('projectId') projectId: string,
+    @Param('schemaName') schemaName: string,
     @Param('tableName') tableName: string,
   ) {
-    return this.tablesService.findOne(projectId, tableName);
+    return this.tablesService.findOne(schemaName, tableName);
   }
 
   @Delete(':tableName')
   drop(
-    @Param('projectId') projectId: string,
+    @Param('schemaName') schemaName: string,
     @Param('tableName') tableName: string,
   ) {
-    return this.tablesService.delete(projectId, tableName);
+    return this.tablesService.delete(schemaName, tableName);
   }
 }
