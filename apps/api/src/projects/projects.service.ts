@@ -1,59 +1,51 @@
 import * as bcrypt from 'bcrypt';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+
+import { Injectable } from '@nestjs/common';
+import { initializeDatabaseSchema } from '@repo/db';
+
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { Pool, initializeDatabaseSchema } from '@repo/db';
 import { createSchemaName } from './projects.utils';
+import { ProjectsRepository } from './projects.repository';
 
 @Injectable()
 export class ProjectsService {
-  constructor(@Inject('PG_POOL') private pool: Pool) {}
+  constructor(private readonly projectsRepo: ProjectsRepository) {}
 
-  async create(createProjectDto: CreateProjectDto) {
-    const hashedPassword = await bcrypt.hash(createProjectDto.password, 10);
-    const schema_name = createSchemaName(createProjectDto.name);
+  async create(dto: CreateProjectDto) {
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+    const schema_name = createSchemaName(dto.name);
 
-    const res = await this.pool.query(
-      'INSERT INTO projects(name,password,schema_name) VALUES($1,$2,$3) RETURNING *',
-      [createProjectDto.name, hashedPassword, schema_name],
+    const project = await this.projectsRepo.insert(
+      dto.name,
+      hashedPassword,
+      schema_name,
     );
 
     //NOTE:  initialize schema, create user and grant permissions
-    await initializeDatabaseSchema(schema_name, createProjectDto.password);
+    await initializeDatabaseSchema(schema_name, dto.password);
 
-    return res.rows[0];
+    return project;
   }
 
   async findAll() {
-    const res = await this.pool.query('SELECT * FROM projects');
-    return res.rows;
+    const res = await this.projectsRepo.findAll();
+    return res;
   }
 
   async findOne(id: string) {
-    const res = await this.pool.query('SELECT * FROM projects WHERE Id = $1', [
-      id,
-    ]);
-    if (res.rows.length === 0) throw new NotFoundException('Project not found');
-    return res.rows[0];
+    const res = await this.projectsRepo.findById(id);
+    return res;
   }
 
-  async update(id: number, updateProjectDto: UpdateProjectDto) {
-    const { name } = updateProjectDto;
-
-    const res = await this.pool.query(
-      'UPDATE projects SET name = $1 WHERE id = $2 RETURNING *',
-      [name, id],
-    );
-
-    if (res.rows.length === 0) {
-      throw new NotFoundException('Project not found');
-    }
-
-    return res.rows[0];
+  async update(id: number, dto: UpdateProjectDto) {
+    const { name } = dto;
+    const res = await this.projectsRepo.update(id, name!);
+    return res;
   }
 
   async remove(id: number) {
-    await this.pool.query('DELETE FROM projects WHERE id = $1', [id]);
+    await this.projectsRepo.delete(id);
     return { message: 'Deleted' };
   }
 }
