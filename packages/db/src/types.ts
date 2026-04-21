@@ -18,3 +18,8 @@ export interface QueryRequest {
 
   returning?: boolean;
 }
+
+export interface BuiltQuery {
+  sql: string;
+  params: any[];
+}

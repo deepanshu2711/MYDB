@@ -1,0 +1,22 @@
+{
+  "name": "@repo/core",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@repo/db": "^1.0.0"
+  }
+}

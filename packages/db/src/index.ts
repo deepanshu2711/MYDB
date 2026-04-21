@@ -10,4 +10,4 @@ export const pool = new Pool({
 export { Pool };
 export { initializeDatabaseSchema } from "./schema-manager";
 
-export type { QueryRequest, QueryAction } from "./types";
+export type { QueryRequest, QueryAction, BuiltQuery } from "./types";

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Pool } from '@repo/db';
+import { pool, Pool } from '@repo/db';
+import { QueryEngine } from '@repo/core';
 
 import { CreateDatumDto } from './dto/create-row.dto';
 import { SelectRowDto } from './dto/select-row.dto';
@@ -17,8 +18,13 @@ import { DeleteRowDto } from './dto/delete-row.dto';
 export class DataService {
   constructor(@Inject('PG_POOL') private pool: Pool) {}
 
-  create(dto: CreateDatumDto, schemaName: string, tableName: string) {
+  async create(dto: CreateDatumDto, schemaName: string, tableName: string) {
     const query = makeInsertQuery(schemaName, tableName, dto.data);
+    const builtQuery = QueryEngine.build(query);
+
+    //NOTE: need to do it like this
+    // const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
+    // return rows;
   }
 
   findAll(schemaName: string, tableName: string, options: SelectRowDto) {
