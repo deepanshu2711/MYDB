@@ -22,22 +22,33 @@ export class DataService {
     const query = makeInsertQuery(schemaName, tableName, dto.data);
     const builtQuery = QueryEngine.build(query);
 
-    //NOTE: need to do it like this
-    // const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
-    // return rows;
+    const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
+    return rows;
   }
 
-  findAll(schemaName: string, tableName: string, options: SelectRowDto) {
+  async findAll(schemaName: string, tableName: string, options: SelectRowDto) {
     const query = makeSelectQuery(schemaName, tableName, {
       limit: options.limit,
     });
+    const builtQuery = QueryEngine.build(query);
+
+    const { rows } = await this.pool.query(builtQuery.sql);
+    return rows;
   }
 
-  update(dto: UpdateRowDto, schemaName: string, tableName: string) {
+  async update(dto: UpdateRowDto, schemaName: string, tableName: string) {
     const query = makeUpdateQuery(schemaName, tableName, dto.data, dto.filter);
+    const builtQuery = QueryEngine.build(query);
+
+    const { rows } = await this.pool.query(builtQuery.sql);
+    return rows;
   }
 
-  remove(dto: DeleteRowDto, schemaName: string, tableName: string) {
+  async remove(dto: DeleteRowDto, schemaName: string, tableName: string) {
     const query = makeDeleteQuery(schemaName, tableName, dto.filter);
+    const builtQuery = QueryEngine.build(query);
+
+    const { rows } = await this.pool.query(builtQuery.sql);
+    return rows;
   }
 }
