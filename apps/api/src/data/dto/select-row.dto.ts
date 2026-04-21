@@ -1,4 +1,11 @@
-import { IsOptional, IsInt, Min, Max, IsString } from 'class-validator';
+import {
+  IsOptional,
+  IsInt,
+  Min,
+  Max,
+  IsString,
+  IsObject,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class SelectRowDto {
@@ -22,4 +29,8 @@ export class SelectRowDto {
   @IsOptional()
   @IsString()
   select?: string;
+
+  @IsOptional()
+  @IsObject()
+  filters?: Record<string, any>;
 }

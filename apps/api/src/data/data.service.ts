@@ -29,6 +29,8 @@ export class DataService {
   async findAll(schemaName: string, tableName: string, options: SelectRowDto) {
     const query = makeSelectQuery(schemaName, tableName, {
       limit: options.limit,
+      offset: options.offset,
+      filter: options.filters,
     });
     const builtQuery = QueryEngine.build(query);
 

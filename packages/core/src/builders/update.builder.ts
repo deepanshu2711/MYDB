@@ -1,6 +1,5 @@
 import { BuiltQuery, QueryRequest } from "@repo/db";
 
-//NOTE: this will update all rows of a table because there is no where clause for now
 export const buildUpdate = (query: QueryRequest): BuiltQuery => {
   const dataKeys = Object.keys(query.data || {});
   const dataValues = Object.values(query.data || {});
@@ -9,11 +8,22 @@ export const buildUpdate = (query: QueryRequest): BuiltQuery => {
     .map((key, index) => `${key} = $${index + 1}`)
     .join(", ");
 
-  const sql = `UPDATE ${query.schema}.${query.table} SET ${setClause}`;
+  let sql = `UPDATE ${query.schema}.${query.table} SET ${setClause}`;
+
+  const params = [...dataValues];
+
+  if (query.filter && Object.keys(query.filter).length > 0) {
+    const whereCondition = Object.keys(query.filter)
+      .map((key, index) => `${key} = $${index + dataKeys.length + 1}`)
+      .join(" AND ");
+
+    sql += ` WHERE ${whereCondition}`;
+    params.push(...Object.values(query.filter));
+  }
 
   return {
     sql,
-    params: dataValues,
+    params,
   };
 };
 
