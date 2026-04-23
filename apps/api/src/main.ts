@@ -15,24 +15,18 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
-  // TODO 1: Exception Filter — wraps errors like ResponseInterceptor wraps success
-  //         create src/common/filters/http-exception.filter.ts
-  //         register globally: app.useGlobalFilters(new HttpExceptionFilter())
-  //         result: { success: false, message: "...", statusCode: 404 }
+  // TODO 1: Custom Pipe — transform/validate query params beyond class-validator
+  //         implement PipeTransform interface with a transform(value, metadata) method
+  //         example: ParseSortPipe converts "?sort=name:asc" → { field: 'name', order: 'ASC' }
+  //         use: @Query('sort', ParseSortPipe) sort in data.controller.ts
+  //         register per-param: @Query('sort', new ParseSortPipe()) or globally via app.useGlobalPipes()
 
-  // TODO 2: Validation Pipe — auto-validates DTOs using class-validator decorators
-  //         install: npm i class-validator class-transformer
-  //         register: app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
-  //         then add @IsString(), @IsNotEmpty() etc. in your DTO files
-
-  // TODO 3: Guards + JWT Auth — protect routes from unauthenticated requests
-  //         install: npm i @nestjs/jwt @nestjs/passport passport passport-jwt
-  //         create src/auth/auth.module.ts, jwt.strategy.ts, jwt-auth.guard.ts
-  //         use: @UseGuards(JwtAuthGuard) on controllers or routes
-
-  // TODO 4: Custom Decorators — extract current user from JWT cleanly
-  //         create src/common/decorators/current-user.decorator.ts
-  //         use: @CurrentUser() user: User in controller method params
+  // TODO 2: Event-Driven Side Effects — decouple actions from their consequences
+  //         install: npm i @nestjs/event-emitter
+  //         register EventEmitterModule.forRoot() in app.module.ts imports
+  //         emit in service: this.eventEmitter.emit('project.created', { projectId, userId })
+  //         handle in listener: @OnEvent('project.created') in a dedicated listener class
+  //         example use case: log audit trail or trigger a webhook when a row/project changes
 
   await app.listen(process.env.PORT ?? 5082);
 }

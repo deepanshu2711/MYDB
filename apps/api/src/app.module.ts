@@ -7,9 +7,16 @@ import { TablesModule } from './tables/tables.module';
 import { DataModule } from './data/data.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
-  imports: [ProjectsModule, DatabaseModule, TablesModule, DataModule],
+  imports: [
+    ProjectsModule,
+    DatabaseModule,
+    TablesModule,
+    DataModule,
+    EventEmitterModule.forRoot(),
+  ],
   providers: [
     {
       provide: APP_INTERCEPTOR,

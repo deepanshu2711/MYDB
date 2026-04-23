@@ -1,5 +1,6 @@
 import * as bcrypt from 'bcrypt';
 
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Injectable } from '@nestjs/common';
 import { initializeDatabaseSchema } from '@repo/db';
 
@@ -10,7 +11,10 @@ import { ProjectsRepository } from './projects.repository';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private readonly projectsRepo: ProjectsRepository) {}
+  constructor(
+    private readonly eventEmitter: EventEmitter2,
+    private readonly projectsRepo: ProjectsRepository,
+  ) {}
 
   async create(dto: CreateProjectDto) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
@@ -24,6 +28,7 @@ export class ProjectsService {
 
     //NOTE:  initialize schema, create user and grant permissions
     await initializeDatabaseSchema(schema_name, dto.password);
+    this.eventEmitter.emit('project.created', { project });
 
     return project;
   }
