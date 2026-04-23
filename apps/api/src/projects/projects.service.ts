@@ -16,7 +16,7 @@ export class ProjectsService {
     private readonly projectsRepo: ProjectsRepository,
   ) {}
 
-  async create(dto: CreateProjectDto) {
+  async create(dto: CreateProjectDto, globalUserId: string) {
     const hashedPassword = await bcrypt.hash(dto.password, 10);
     const schema_name = createSchemaName(dto.name);
 
@@ -24,6 +24,7 @@ export class ProjectsService {
       dto.name,
       hashedPassword,
       schema_name,
+      globalUserId,
     );
 
     //NOTE:  initialize schema, create user and grant permissions
@@ -33,24 +34,24 @@ export class ProjectsService {
     return project;
   }
 
-  async findAll() {
-    const res = await this.projectsRepo.findAll();
+  async findAll(globalUserId: string) {
+    const res = await this.projectsRepo.findAll(globalUserId);
     return res;
   }
 
-  async findOne(id: string) {
-    const res = await this.projectsRepo.findById(id);
+  async findOne(id: string, globalUserId: string) {
+    const res = await this.projectsRepo.findById(id, globalUserId);
     return res;
   }
 
-  async update(id: number, dto: UpdateProjectDto) {
+  async update(id: string, dto: UpdateProjectDto, globalUserId: string) {
     const { name } = dto;
-    const res = await this.projectsRepo.update(id, name!);
+    const res = await this.projectsRepo.update(id, globalUserId, name!);
     return res;
   }
 
-  async remove(id: number) {
-    await this.projectsRepo.delete(id);
+  async remove(id: string, globalUserId: string) {
+    await this.projectsRepo.delete(id, globalUserId);
     return { message: 'Deleted' };
   }
 }

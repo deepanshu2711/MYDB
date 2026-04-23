@@ -6,13 +6,13 @@ import {
   Patch,
   Param,
   Delete,
-  HttpCode,
   UseGuards,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { JwksAuthGuard } from 'src/auth/jwks-auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @UseGuards(JwksAuthGuard)
 @Controller('projects')
@@ -20,32 +20,40 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  @HttpCode(201)
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  create(
+    @CurrentUser('globalUserId') globalUserId: string,
+    @Body() createProjectDto: CreateProjectDto,
+  ) {
+    return this.projectsService.create(createProjectDto, globalUserId);
   }
 
   @Get()
-  @HttpCode(200)
-  findAll() {
-    return this.projectsService.findAll();
+  findAll(@CurrentUser('globalUserId') globalUserId: string) {
+    return this.projectsService.findAll(globalUserId);
   }
 
   @Get(':id')
-  @HttpCode(200)
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(id);
+  findOne(
+    @Param('id') id: string,
+    @CurrentUser('globalUserId') globalUserId: string,
+  ) {
+    return this.projectsService.findOne(id, globalUserId);
   }
 
   @Patch(':id')
-  @HttpCode(200)
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectsService.update(+id, updateProjectDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateProjectDto: UpdateProjectDto,
+    @CurrentUser('globalUserId') globalUserId: string,
+  ) {
+    return this.projectsService.update(id, updateProjectDto, globalUserId);
   }
 
   @Delete(':id')
-  @HttpCode(200)
-  remove(@Param('id') id: string) {
-    return this.projectsService.remove(+id);
+  remove(
+    @Param('id') id: string,
+    @CurrentUser('globalUserId') globalUserId: string,
+  ) {
+    return this.projectsService.remove(id, globalUserId);
   }
 }
