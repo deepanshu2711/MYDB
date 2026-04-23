@@ -1,7 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { TablesService } from './tables.service';
 import { CreateTableDto } from './dto/create-table.dto';
+import { JwksAuthGuard } from 'src/auth/jwks-auth.guard';
 
+@UseGuards(JwksAuthGuard)
 @Controller('projects/:schemaName/tables')
 export class TablesController {
   constructor(private readonly tablesService: TablesService) {}

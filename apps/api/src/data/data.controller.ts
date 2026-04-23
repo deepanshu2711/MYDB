@@ -7,13 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { DataService } from './data.service';
 import { CreateDatumDto } from './dto/create-row.dto';
 import { SelectRowDto } from './dto/select-row.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
 import { DeleteRowDto } from './dto/delete-row.dto';
+import { JwksAuthGuard } from 'src/auth/jwks-auth.guard';
 
+@UseGuards(JwksAuthGuard)
 @Controller('data/:schemaName/:tableName')
 export class DataController {
   constructor(private readonly dataService: DataService) {}
