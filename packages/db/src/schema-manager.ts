@@ -52,3 +52,28 @@ export const initializeDatabaseSchema = async (
     throw error;
   }
 };
+
+export const teardownDatabaseSchema = async (schemaName: string) => {
+  const dbUser = `${schemaName}_user`;
+  const safeUser = `"${dbUser.replace(/"/g, '""')}"`;
+
+  try {
+    const { rows } = await pool.query("SELECT current_database()");
+    const dbName = rows[0].current_database;
+
+    await pool.query(`REVOKE CONNECT ON DATABASE "${dbName}" FROM ${safeUser}`);
+    await pool.query(
+      `REVOKE ALL PRIVILEGES ON SCHEMA ${schemaName} FROM ${safeUser}`,
+    );
+    await pool.query(`DROP SCHEMA IF EXISTS ${schemaName} CASCADE`);
+    await pool.query(`DROP USER IF EXISTS ${safeUser}`);
+  } catch (error) {
+    console.error("Error tearing down database schema:", {
+      schemaName,
+      dbUser,
+      error,
+    });
+
+    throw error;
+  }
+};

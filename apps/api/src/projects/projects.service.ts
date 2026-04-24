@@ -51,7 +51,9 @@ export class ProjectsService {
   }
 
   async remove(id: string, globalUserId: string) {
+    const project = await this.projectsRepo.findById(id, globalUserId);
     await this.projectsRepo.delete(id, globalUserId);
+    this.eventEmitter.emit('project.deleted', { project });
     return { message: 'Deleted' };
   }
 }

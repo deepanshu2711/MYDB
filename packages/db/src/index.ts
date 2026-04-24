@@ -8,6 +8,9 @@ export const pool = new Pool({
 });
 
 export { Pool };
-export { initializeDatabaseSchema } from "./schema-manager";
+export {
+  initializeDatabaseSchema,
+  teardownDatabaseSchema,
+} from "./schema-manager";
 
 export type { QueryRequest, QueryAction, BuiltQuery } from "./types";

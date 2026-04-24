@@ -34,7 +34,7 @@ export class DataService {
     });
     const builtQuery = QueryEngine.build(query);
 
-    const { rows } = await this.pool.query(builtQuery.sql);
+    const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
     return rows;
   }
 
@@ -42,7 +42,7 @@ export class DataService {
     const query = makeUpdateQuery(schemaName, tableName, dto.data, dto.filter);
     const builtQuery = QueryEngine.build(query);
 
-    const { rows } = await this.pool.query(builtQuery.sql);
+    const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
     return rows;
   }
 
@@ -50,7 +50,7 @@ export class DataService {
     const query = makeDeleteQuery(schemaName, tableName, dto.filter);
     const builtQuery = QueryEngine.build(query);
 
-    const { rows } = await this.pool.query(builtQuery.sql);
+    const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
     return rows;
   }
 }
