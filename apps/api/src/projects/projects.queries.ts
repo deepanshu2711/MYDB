@@ -6,4 +6,6 @@ export const PROJECT_QUERIES = {
   UPDATE:
     'UPDATE projects SET name = $1 WHERE id = $2 AND global_user_id = $3 RETURNING *',
   DELETE: 'DELETE FROM projects WHERE id = $1 AND global_user_id = $2',
+  FIND_BY_SCHEMA:
+    'SELECT 1 FROM projects WHERE schema_name = $1 AND global_user_id = $2',
 };

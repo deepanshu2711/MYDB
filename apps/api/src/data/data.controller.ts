@@ -15,8 +15,9 @@ import { SelectRowDto } from './dto/select-row.dto';
 import { UpdateRowDto } from './dto/update-row.dto';
 import { DeleteRowDto } from './dto/delete-row.dto';
 import { JwksAuthGuard } from 'src/auth/jwks-auth.guard';
+import { SchemaOwnershipGuard } from 'src/auth/schema-ownership-gaurd';
 
-@UseGuards(JwksAuthGuard)
+@UseGuards(JwksAuthGuard, SchemaOwnershipGuard)
 @Controller('data/:schemaName/:tableName')
 export class DataController {
   constructor(private readonly dataService: DataService) {}

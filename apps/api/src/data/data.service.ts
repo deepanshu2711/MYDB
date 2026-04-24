@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { pool, Pool } from '@repo/db';
+import { Pool } from '@repo/db';
 import { QueryEngine } from '@repo/core';
 
 import { CreateDatumDto } from './dto/create-row.dto';

@@ -49,4 +49,15 @@ export class ProjectsRepository {
   async delete(id: string, globalUserId: string) {
     await this.pool.query(PROJECT_QUERIES.DELETE, [id, globalUserId]);
   }
+
+  async existsBySchema(
+    schemaName: string,
+    globalUserId: string,
+  ): Promise<boolean> {
+    const { rows } = await this.pool.query(PROJECT_QUERIES.FIND_BY_SCHEMA, [
+      schemaName,
+      globalUserId,
+    ]);
+    return rows.length > 0;
+  }
 }

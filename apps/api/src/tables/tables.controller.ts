@@ -10,8 +10,9 @@ import {
 import { TablesService } from './tables.service';
 import { CreateTableDto } from './dto/create-table.dto';
 import { JwksAuthGuard } from 'src/auth/jwks-auth.guard';
+import { SchemaOwnershipGuard } from 'src/auth/schema-ownership-gaurd';
 
-@UseGuards(JwksAuthGuard)
+@UseGuards(JwksAuthGuard, SchemaOwnershipGuard)
 @Controller('projects/:schemaName/tables')
 export class TablesController {
   constructor(private readonly tablesService: TablesService) {}
