@@ -340,11 +340,13 @@ function CreateProjectDialog({
   if (!open) return null;
 
   const passwordValid =
-    password.length >= 8 &&
-    /[a-z]/.test(password) &&
-    /[A-Z]/.test(password) &&
-    /\d/.test(password) &&
-    /[@$!%*?&]/.test(password);
+    password.length >= 18 &&
+    password.length <= 24 &&
+    (password.match(/[A-Z]/g) ?? []).length >= 2 &&
+    (password.match(/[a-z]/g) ?? []).length >= 2 &&
+    (password.match(/\d/g) ?? []).length >= 2 &&
+    (password.match(/[_\-.!]/g) ?? []).length >= 2 &&
+    /^[A-Za-z0-9_\-.!]+$/.test(password);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -354,7 +356,7 @@ function CreateProjectDialog({
     }
     if (!passwordValid) {
       setError(
-        "Password must be at least 8 chars with uppercase, lowercase, digit, and special char (@$!%*?&).",
+        "Password must be 18-24 chars with 2+ uppercase, 2+ lowercase, 2+ digits, and 2+ special chars (_ - . !) only.",
       );
       return;
     }
@@ -504,7 +506,7 @@ function CreateProjectDialog({
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min 8 chars, mixed case, digit, special"
+                placeholder="18-24 chars, 2+ uppercase, digit, and _ - . !"
                 style={{
                   width: "100%",
                   backgroundColor: "#f5f1ea",
@@ -551,11 +553,12 @@ function CreateProjectDialog({
                 }}
               >
                 {[
-                  { label: "8+ chars", ok: password.length >= 8 },
-                  { label: "Uppercase", ok: /[A-Z]/.test(password) },
-                  { label: "Lowercase", ok: /[a-z]/.test(password) },
-                  { label: "Digit", ok: /\d/.test(password) },
-                  { label: "Special", ok: /[@$!%*?&]/.test(password) },
+                  { label: "18-24 chars", ok: password.length >= 18 && password.length <= 24 },
+                  { label: "2+ Uppercase", ok: (password.match(/[A-Z]/g) ?? []).length >= 2 },
+                  { label: "2+ Lowercase", ok: (password.match(/[a-z]/g) ?? []).length >= 2 },
+                  { label: "2+ Digits", ok: (password.match(/\d/g) ?? []).length >= 2 },
+                  { label: "2+ Special (_-.!)", ok: (password.match(/[_\-.!]/g) ?? []).length >= 2 },
+                  { label: "Safe chars only", ok: password.length > 0 && /^[A-Za-z0-9_\-.!]+$/.test(password) },
                 ].map(({ label, ok }) => (
                   <span
                     key={label}
