@@ -1,62 +1,6 @@
 "use client";
 import { useState } from "react";
 
-// ── Shared Nav (same as ProjectDetails) ──────────────────────────────────────
-const NAV_ITEMS = [
-  { icon: "folder_shared", label: "Projects" },
-  { icon: "database", label: "Databases" },
-  { icon: "monitoring", label: "Analytics" },
-  { icon: "terminal", label: "Query Engine", active: true },
-  { icon: "settings", label: "Settings" },
-];
-
-const FOOTER_ITEMS = [
-  { icon: "menu_book", label: "Documentation" },
-  { icon: "contact_support", label: "Support" },
-];
-
-function Sidebar() {
-  return (
-    <aside className="w-56 flex-shrink-0 h-full bg-[#faf6f0] border-r border-[#c4c8bc]/60 flex flex-col p-3">
-      <div className="font-serif text-[#4a7c59] text-lg font-bold mb-6 px-2">
-        MyDB
-      </div>
-      <nav className="flex flex-col gap-1 flex-1">
-        {NAV_ITEMS.map(({ icon, label, active }) => (
-          <a
-            key={label}
-            href="#"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold tracking-wide transition-colors ${
-              active
-                ? "bg-[#4a7c59] text-[#faf6f0]"
-                : "text-[#6b6358] hover:bg-[#4a7c59]/10 hover:text-[#4a7c59]"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[18px]">
-              {icon}
-            </span>
-            {label}
-          </a>
-        ))}
-      </nav>
-      <div className="pt-3 border-t border-[#c4c8bc]/60 flex flex-col gap-1">
-        {FOOTER_ITEMS.map(({ icon, label }) => (
-          <a
-            key={label}
-            href="#"
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#6b6358] hover:text-[#4a7c59] rounded-lg transition-colors"
-          >
-            <span className="material-symbols-outlined text-[17px]">
-              {icon}
-            </span>
-            {label}
-          </a>
-        ))}
-      </div>
-    </aside>
-  );
-}
-
 // ── Top Bar ───────────────────────────────────────────────────────────────────
 function TopBar() {
   return (
@@ -522,19 +466,7 @@ export default function QueryEngine() {
   };
 
   return (
-    <div className="flex h-screen bg-[#faf6f0] text-[#2e3230] overflow-hidden">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Literata:wght@400;700;900&family=Nunito+Sans:wght@300;400;600;700;800&family=JetBrains+Mono&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap');
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
-        .font-serif { font-family: 'Literata', serif; }
-        .font-mono { font-family: 'JetBrains Mono', monospace; }
-        body { font-family: 'Nunito Sans', sans-serif; }
-      `}</style>
-
-      <Sidebar />
-
-      <div className="flex flex-col flex-1 overflow-hidden">
+    <div className="flex flex-col flex-1 overflow-hidden bg-[#faf6f0] text-[#2e3230]">
         <TopBar />
 
         <div className="flex flex-1 overflow-hidden">
@@ -559,7 +491,6 @@ export default function QueryEngine() {
             <ResultsPanel />
           </div>
         </div>
-      </div>
 
       {/* FAB */}
       <button className="fixed bottom-7 right-7 w-14 h-14 bg-[#4a7c59] text-white rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">

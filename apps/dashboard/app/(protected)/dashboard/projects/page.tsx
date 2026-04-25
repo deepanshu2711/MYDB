@@ -5,19 +5,6 @@ import { useRouter } from "next/navigation";
 
 const API_BASE = "http://localhost:5082/api/v1";
 
-const NAV_ITEMS = [
-  { icon: "folder_shared", label: "Projects", active: true },
-  { icon: "database", label: "Databases", active: false },
-  { icon: "monitoring", label: "Analytics", active: false },
-  { icon: "terminal", label: "Query Engine", active: false },
-  { icon: "settings", label: "Settings", active: false },
-];
-
-const FOOTER_ITEMS = [
-  { icon: "menu_book", label: "Documentation" },
-  { icon: "contact_support", label: "Support" },
-];
-
 const DEPLOYMENTS = [
   { id: "db-alpha-902", version: "v14.2.8", load: 45, uptime: "142d 04h" },
   {
@@ -804,7 +791,7 @@ function DeploymentRow({
 export default function MyDBProjects() {
   const { token } = useAuth();
   const [search, setSearch] = useState("");
-  const [activeNav, setActiveNav] = useState("Overview");
+  const [activeTab, setActiveTab] = useState("Overview");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [projectsLoading, setProjectsLoading] = useState(true);
@@ -841,182 +828,20 @@ export default function MyDBProjects() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Literata:wght@400;600;700;900&family=Nunito+Sans:wght@300;400;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Nunito Sans', sans-serif; background-color: #faf6f0; color: #2e3230; }
-        .font-serif { font-family: 'Literata', serif; }
-        .material-symbols-outlined {
-          font-family: 'Material Symbols Outlined';
-          font-weight: normal; font-style: normal;
-          display: inline-block; line-height: 1;
-          text-transform: none; letter-spacing: normal;
-          white-space: nowrap; direction: ltr;
-        }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 9999px; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
       `}</style>
 
-      <div
+      <main
         style={{
+          flex: 1,
           display: "flex",
-          minHeight: "100vh",
-          backgroundColor: "#faf6f0",
+          flexDirection: "column",
+          overflow: "hidden",
           fontFamily: "'Nunito Sans', sans-serif",
         }}
       >
-        {/* Sidebar */}
-        <aside
-          style={{
-            width: 256,
-            height: "100vh",
-            position: "fixed",
-            left: 0,
-            top: 0,
-            zIndex: 20,
-            backgroundColor: "#faf6f0",
-            borderRight: "1px solid #e7e5e4",
-            boxShadow: "0 4px 20px rgba(46,50,48,0.06)",
-            display: "flex",
-            flexDirection: "column",
-            padding: 16,
-          }}
-        >
-          <div
-            className="font-serif"
-            style={{
-              color: "#4a7c59",
-              fontSize: 20,
-              fontWeight: 700,
-              marginBottom: 32,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            <Icon name="database" filled />
-            MyDB
-          </div>
-
-          <nav
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href="#"
-                style={
-                  item.active
-                    ? {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        backgroundColor: "#4a7c59",
-                        color: "#faf6f0",
-                        borderRadius: 12,
-                        padding: "12px 16px",
-                        fontSize: 14,
-                        fontWeight: 600,
-                        letterSpacing: "0.05em",
-                        textDecoration: "none",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                        transition: "all 0.2s",
-                      }
-                    : {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        color: "#6b6358",
-                        borderRadius: 12,
-                        padding: "12px 16px",
-                        fontSize: 14,
-                        fontWeight: 600,
-                        letterSpacing: "0.05em",
-                        textDecoration: "none",
-                        transition: "all 0.2s",
-                      }
-                }
-                onMouseEnter={(e) => {
-                  if (!item.active) {
-                    e.currentTarget.style.color = "#4a7c59";
-                    e.currentTarget.style.backgroundColor =
-                      "rgba(212,204,191,0.5)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!item.active) {
-                    e.currentTarget.style.color = "#6b6358";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }
-                }}
-              >
-                <Icon name={item.icon} filled={item.active} />
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div
-            style={{
-              paddingTop: 16,
-              borderTop: "1px solid #e7e5e4",
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            {FOOTER_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href="#"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  color: "#6b6358",
-                  borderRadius: 12,
-                  padding: "12px 16px",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                  textDecoration: "none",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#4a7c59";
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(212,204,191,0.5)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#6b6358";
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-              >
-                <Icon name={item.icon} />
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </aside>
-
-        {/* Main */}
-        <main
-          style={{
-            marginLeft: 256,
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            minHeight: "100vh",
-            overflow: "hidden",
-          }}
-        >
           {/* Top bar */}
           <header
             style={{
@@ -1048,26 +873,26 @@ export default function MyDBProjects() {
                   <a
                     key={tab}
                     href="#"
-                    onClick={() => setActiveNav(tab)}
+                    onClick={() => setActiveTab(tab)}
                     style={{
-                      color: activeNav === tab ? "#4a7c59" : "#6b6358",
-                      fontWeight: activeNav === tab ? 700 : 500,
+                      color: activeTab === tab ? "#4a7c59" : "#6b6358",
+                      fontWeight: activeTab === tab ? 700 : 500,
                       borderBottom:
-                        activeNav === tab
+                        activeTab === tab
                           ? "2px solid #4a7c59"
                           : "2px solid transparent",
                       textDecoration: "none",
                       fontSize: 14,
                       padding: "4px 8px",
-                      borderRadius: activeNav !== tab ? 8 : 0,
+                      borderRadius: activeTab !== tab ? 8 : 0,
                       transition: "all 0.15s",
                     }}
                     onMouseEnter={(e) => {
-                      if (activeNav !== tab)
+                      if (activeTab !== tab)
                         e.currentTarget.style.backgroundColor = "#f5f5f4";
                     }}
                     onMouseLeave={(e) => {
-                      if (activeNav !== tab)
+                      if (activeTab !== tab)
                         e.currentTarget.style.backgroundColor = "transparent";
                     }}
                   >
@@ -1546,7 +1371,6 @@ export default function MyDBProjects() {
         >
           <Icon name="add" style={{ fontSize: 30 }} />
         </button>
-      </div>
 
       <CreateProjectDialog
         open={dialogOpen}

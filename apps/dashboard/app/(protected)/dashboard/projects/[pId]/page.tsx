@@ -28,62 +28,6 @@ function parseConnectionString(connStr: string) {
   }
 }
 
-// ── Sidebar ──────────────────────────────────────────────────────────────────
-const NAV_ITEMS = [
-  { icon: "folder_shared", label: "Projects", active: true },
-  { icon: "database", label: "Databases" },
-  { icon: "monitoring", label: "Analytics" },
-  { icon: "terminal", label: "Query Engine" },
-  { icon: "settings", label: "Settings" },
-];
-
-const FOOTER_ITEMS = [
-  { icon: "menu_book", label: "Documentation" },
-  { icon: "contact_support", label: "Support" },
-];
-
-function Sidebar() {
-  return (
-    <aside className="w-56 flex-shrink-0 h-full bg-[#faf6f0] border-r border-[#c4c8bc]/60 flex flex-col p-3">
-      <div className="font-serif text-[#4a7c59] text-lg font-bold mb-6 px-2">
-        MyDB
-      </div>
-      <nav className="flex flex-col gap-1 flex-1">
-        {NAV_ITEMS.map(({ icon, label, active }) => (
-          <a
-            key={label}
-            href="#"
-            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-semibold tracking-wide transition-colors ${
-              active
-                ? "bg-[#4a7c59] text-[#faf6f0]"
-                : "text-[#6b6358] hover:bg-[#4a7c59]/10 hover:text-[#4a7c59]"
-            }`}
-          >
-            <span className="material-symbols-outlined text-[18px]">
-              {icon}
-            </span>
-            {label}
-          </a>
-        ))}
-      </nav>
-      <div className="pt-3 border-t border-[#c4c8bc]/60 flex flex-col gap-1">
-        {FOOTER_ITEMS.map(({ icon, label }) => (
-          <a
-            key={label}
-            href="#"
-            className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#6b6358] hover:text-[#4a7c59] rounded-lg transition-colors"
-          >
-            <span className="material-symbols-outlined text-[17px]">
-              {icon}
-            </span>
-            {label}
-          </a>
-        ))}
-      </div>
-    </aside>
-  );
-}
-
 // ── Top Bar ───────────────────────────────────────────────────────────────────
 function TopBar({ projectName }: { projectName: string }) {
   return (
@@ -558,18 +502,7 @@ export default function ProjectDetails() {
   }, [fetchProject]);
 
   return (
-    <div className="flex h-screen bg-[#faf6f0] text-[#2e3230] font-sans overflow-hidden">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400..900;1,400..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap');
-        .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
-        .font-serif { font-family: 'Literata', serif; }
-        body { font-family: 'Nunito Sans', sans-serif; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
-
-      <Sidebar />
-
+    <div className="flex flex-col flex-1 overflow-hidden text-[#2e3230]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
       {showDeleteModal && project && (
         <DeleteProjectModal
           projectName={project.name}

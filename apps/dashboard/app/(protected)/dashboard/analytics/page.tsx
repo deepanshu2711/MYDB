@@ -1,19 +1,6 @@
 "use client";
 import { useState } from "react";
 
-const NAV_ITEMS = [
-  { icon: "folder_shared", label: "Projects", active: false },
-  { icon: "database", label: "Databases", active: false },
-  { icon: "monitoring", label: "Analytics", active: true },
-  { icon: "terminal", label: "Query Engine", active: false },
-  { icon: "settings", label: "Settings", active: false },
-];
-
-const FOOTER_ITEMS = [
-  { icon: "menu_book", label: "Documentation" },
-  { icon: "contact_support", label: "Support" },
-];
-
 const METRICS = [
   {
     label: "Total Queries",
@@ -121,180 +108,14 @@ export default function MyDBAnalytics() {
   const [hoveredBar, setHoveredBar] = useState(null);
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Literata:wght@400;700;900&family=Nunito+Sans:wght@400;600;700;800&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Nunito Sans', sans-serif; background-color: #faf6f0; color: #2e3230; }
-        .font-serif { font-family: 'Literata', serif; }
-        .material-symbols-outlined {
-          font-family: 'Material Symbols Outlined';
-          font-weight: normal; font-style: normal;
-          display: inline-block; line-height: 1;
-          text-transform: none; letter-spacing: normal;
-          white-space: nowrap; direction: ltr;
-        }
-      `}</style>
-
-      <div
-        style={{
-          display: "flex",
-          minHeight: "100vh",
-          backgroundColor: "#faf6f0",
-          fontFamily: "'Nunito Sans', sans-serif",
-        }}
-      >
-        {/* Sidebar */}
-        <aside
-          style={{
-            width: 256,
-            height: "100vh",
-            position: "fixed",
-            left: 0,
-            top: 0,
-            backgroundColor: "#faf6f0",
-            borderRight: "1px solid #e7e5e4",
-            boxShadow: "0 4px 20px rgba(46,50,48,0.06)",
-            display: "flex",
-            flexDirection: "column",
-            padding: 16,
-            zIndex: 50,
-          }}
-        >
-          <div style={{ marginBottom: 32, padding: "0 16px" }}>
-            <div
-              className="font-serif"
-              style={{ color: "#4a7c59", fontSize: 20, fontWeight: 700 }}
-            >
-              MyDB
-            </div>
-            <div
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "#a8a29e",
-                marginTop: 4,
-              }}
-            >
-              Enterprise Data
-            </div>
-          </div>
-
-          <nav
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            {NAV_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href="#"
-                style={
-                  item.active
-                    ? {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        backgroundColor: "#4a7c59",
-                        color: "#faf6f0",
-                        borderRadius: 12,
-                        padding: "12px 16px",
-                        fontSize: 14,
-                        fontWeight: 600,
-                        letterSpacing: "0.05em",
-                        textDecoration: "none",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                      }
-                    : {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        color: "#6b6358",
-                        borderRadius: 12,
-                        padding: "12px 16px",
-                        fontSize: 14,
-                        fontWeight: 600,
-                        letterSpacing: "0.05em",
-                        textDecoration: "none",
-                      }
-                }
-                onMouseEnter={(e) => {
-                  if (!item.active) {
-                    e.currentTarget.style.color = "#4a7c59";
-                    e.currentTarget.style.backgroundColor =
-                      "rgba(212,204,191,0.5)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!item.active) {
-                    e.currentTarget.style.color = "#6b6358";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }
-                }}
-              >
-                <Icon name={item.icon} filled={item.active} />
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div
-            style={{
-              paddingTop: 16,
-              borderTop: "1px solid #e7e5e4",
-              display: "flex",
-              flexDirection: "column",
-              gap: 4,
-            }}
-          >
-            {FOOTER_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href="#"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 12,
-                  color: "#6b6358",
-                  borderRadius: 12,
-                  padding: "12px 16px",
-                  fontSize: 14,
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                  textDecoration: "none",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = "#4a7c59";
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(212,204,191,0.5)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = "#6b6358";
-                  e.currentTarget.style.backgroundColor = "transparent";
-                }}
-              >
-                <Icon name={item.icon} />
-                {item.label}
-              </a>
-            ))}
-          </div>
-        </aside>
-
-        {/* Main */}
-        <div
-          style={{
-            marginLeft: 256,
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+    <div
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        fontFamily: "'Nunito Sans', sans-serif",
+      }}
+    >
           {/* Top bar */}
           <header
             style={{
@@ -1009,7 +830,6 @@ export default function MyDBAnalytics() {
               </div>
             </div>
           </main>
-        </div>
 
         {/* FAB */}
         <div style={{ position: "fixed", bottom: 32, right: 32, zIndex: 50 }}>
@@ -1037,6 +857,5 @@ export default function MyDBAnalytics() {
           </button>
         </div>
       </div>
-    </>
   );
 }
