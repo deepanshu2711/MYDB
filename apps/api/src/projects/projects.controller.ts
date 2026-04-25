@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
   UseGuards,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';

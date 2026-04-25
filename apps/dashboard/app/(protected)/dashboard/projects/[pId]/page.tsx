@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@myauth/next";
 
 const API_BASE = "http://localhost:5082/api/v1";
@@ -433,15 +433,107 @@ function SupportCard() {
   );
 }
 
+// ── Delete Modal ──────────────────────────────────────────────────────────────
+function DeleteProjectModal({
+  projectName,
+  deleting,
+  onConfirm,
+  onCancel,
+}: {
+  projectName: string;
+  deleting: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-[#faf6f0] rounded-2xl shadow-2xl border border-[#c4c8bc]/40 p-7 w-[420px] max-w-full">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="bg-red-100 w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0">
+            <span className="material-symbols-outlined text-red-600 text-[20px]">
+              delete_forever
+            </span>
+          </div>
+          <h2 className="font-serif text-lg font-bold text-[#2e3230]">
+            Delete Project
+          </h2>
+        </div>
+        <p className="text-sm text-[#4a4e4a] leading-relaxed mb-6">
+          Are you sure you want to delete{" "}
+          <span className="font-bold text-[#2e3230]">{projectName}</span>? This
+          will permanently remove the project and its database schema. This
+          action cannot be undone.
+        </p>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onCancel}
+            disabled={deleting}
+            className="px-4 py-2 text-sm font-bold text-[#4a4e4a] bg-[#eae6de] rounded-lg hover:bg-[#e4e0d8] transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={deleting}
+            className="px-4 py-2 text-sm font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-60 flex items-center gap-1.5"
+          >
+            {deleting ? (
+              <>
+                <span
+                  className="material-symbols-outlined text-[15px]"
+                  style={{ animation: "spin 1s linear infinite" }}
+                >
+                  autorenew
+                </span>
+                Deleting…
+              </>
+            ) : (
+              <>
+                <span className="material-symbols-outlined text-[15px]">
+                  delete
+                </span>
+                Delete Project
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function ProjectDetails() {
   const params = useParams();
   const pId = params?.pId as string;
   const { token } = useAuth();
+  const router = useRouter();
 
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const handleDelete = async () => {
+    if (!token || !pId) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch(`${API_BASE}/projects/${pId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      router.push("/dashboard/projects");
+    } catch (err: unknown) {
+      setDeleteError(
+        err instanceof Error ? err.message : "Failed to delete project.",
+      );
+      setDeleting(false);
+    }
+  };
 
   const fetchProject = useCallback(async () => {
     if (!token || !pId) return;
@@ -478,6 +570,18 @@ export default function ProjectDetails() {
 
       <Sidebar />
 
+      {showDeleteModal && project && (
+        <DeleteProjectModal
+          projectName={project.name}
+          deleting={deleting}
+          onConfirm={handleDelete}
+          onCancel={() => {
+            setShowDeleteModal(false);
+            setDeleteError(null);
+          }}
+        />
+      )}
+
       <div className="flex flex-col flex-1 overflow-hidden">
         <TopBar projectName={project?.name ?? ""} />
 
@@ -511,9 +615,20 @@ export default function ProjectDetails() {
 
           {!loading && !error && project && (
             <>
-              <h2 className="font-serif text-3xl font-black text-[#2e3230] mb-1.5">
-                {project.name}
-              </h2>
+              <div className="flex items-start justify-between mb-1.5">
+                <h2 className="font-serif text-3xl font-black text-[#2e3230]">
+                  {project.name}
+                </h2>
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-bold text-red-600 border border-red-200 bg-red-50 rounded-xl hover:bg-red-100 transition-colors active:scale-95"
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    delete
+                  </span>
+                  Delete Project
+                </button>
+              </div>
               <p className="text-[#4a4e4a] text-sm leading-relaxed mb-7 max-w-2xl">
                 Schema:{" "}
                 <span className="font-mono text-[#4a7c59]">
@@ -526,6 +641,14 @@ export default function ProjectDetails() {
                   </>
                 )}
               </p>
+              {deleteError && (
+                <div className="mb-4 flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 text-sm font-semibold">
+                  <span className="material-symbols-outlined text-[16px]">
+                    error
+                  </span>
+                  {deleteError}
+                </div>
+              )}
 
               <div className="grid grid-cols-[1fr_300px] gap-5">
                 <div className="flex flex-col gap-5">
