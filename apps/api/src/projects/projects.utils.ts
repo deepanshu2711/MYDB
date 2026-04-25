@@ -1,5 +1,11 @@
 import { createHash } from 'crypto';
 
+export function buildConnectionString(schemaName: string): string {
+  const url = new URL(process.env['DATABASE_URL']!);
+  const dbUser = `${schemaName}_user`;
+  return `postgresql://${dbUser}:********@${url.host}/mydb`;
+}
+
 export function createSchemaName(projectName: string): string {
   const slug = projectName
     .trim()

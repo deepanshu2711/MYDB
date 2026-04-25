@@ -6,7 +6,7 @@ import { initializeDatabaseSchema } from '@repo/db';
 
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { createSchemaName } from './projects.utils';
+import { buildConnectionString, createSchemaName } from './projects.utils';
 import { ProjectsRepository } from './projects.repository';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class ProjectsService {
 
   async findOne(id: string, globalUserId: string) {
     const res = await this.projectsRepo.findById(id, globalUserId);
-    return res;
+    return { ...res, connection_string: buildConnectionString(res.schema_name) };
   }
 
   async update(id: string, dto: UpdateProjectDto, globalUserId: string) {

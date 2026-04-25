@@ -20,7 +20,7 @@ const STATS = [
   {
     icon: "database",
     label: "Databases",
-    value: "158",
+    value: "1",
     badge: "Stable",
     color: "tertiary",
   },

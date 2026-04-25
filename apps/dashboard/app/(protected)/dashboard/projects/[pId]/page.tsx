@@ -1,5 +1,32 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useParams } from "next/navigation";
+import { useAuth } from "@myauth/next";
+
+const API_BASE = "http://localhost:5082/api/v1";
+
+interface Project {
+  id: string;
+  name: string;
+  schema_name: string;
+  connection_string: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+function parseConnectionString(connStr: string) {
+  try {
+    const url = new URL(connStr);
+    return {
+      user: url.username || connStr.split("://")[1]?.split("@")[0] || "",
+      host: url.hostname,
+      port: url.port || "5432",
+      database: url.pathname.replace("/", "") || "mydb",
+    };
+  } catch {
+    return { user: "", host: "", port: "5432", database: "mydb" };
+  }
+}
 
 // ── Sidebar ──────────────────────────────────────────────────────────────────
 const NAV_ITEMS = [
@@ -58,15 +85,15 @@ function Sidebar() {
 }
 
 // ── Top Bar ───────────────────────────────────────────────────────────────────
-function TopBar() {
+function TopBar({ projectName }: { projectName: string }) {
   return (
     <header className="flex items-center justify-between px-6 h-14 bg-[#faf6f0] border-b border-[#c4c8bc]/60 flex-shrink-0">
       <div className="flex items-center gap-3">
         <h1 className="font-serif font-bold text-[15px] text-[#4a7c59]">
-          Project: Sequoia_Main_DB
+          Project: {projectName || "—"}
         </h1>
         <span className="bg-[#c8e8d0] text-[#2a6038] text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
-          Production
+          Active
         </span>
       </div>
       <div className="flex items-center gap-2">
@@ -99,7 +126,7 @@ function TopBar() {
 }
 
 // ── Connection Info ───────────────────────────────────────────────────────────
-function CopyButton({ text, label }) {
+function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -116,12 +143,12 @@ function CopyButton({ text, label }) {
       <span className="material-symbols-outlined text-[14px]">
         {copied ? "check" : "content_copy"}
       </span>
-      {label ?? (copied ? "Copied!" : "Copy")}
+      {copied ? "Copied!" : "Copy"}
     </button>
   );
 }
 
-function InfoCell({ label, value }) {
+function InfoCell({ label, value }: { label: string; value: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <div className="bg-[#eae6de]/50 p-3 rounded-lg border border-[#c4c8bc]/20">
@@ -149,9 +176,8 @@ function InfoCell({ label, value }) {
   );
 }
 
-function ConnectionInfo() {
-  const connString =
-    "postgresql://admin:••••••••••••@sequoia-db-prod.internal:5432/main_v3";
+function ConnectionInfo({ connectionString }: { connectionString: string }) {
+  const { host, port, database, user } = parseConnectionString(connectionString);
 
   return (
     <section className="bg-[#f5f1ea] rounded-xl p-5 border border-[#c4c8bc]/30">
@@ -169,15 +195,16 @@ function ConnectionInfo() {
         </div>
         <div className="flex gap-2">
           <code className="flex-1 bg-[#eae6de] px-3 py-2.5 rounded-lg text-xs font-mono text-[#4a7c59] truncate border border-[#c4c8bc]/30">
-            {connString}
+            {connectionString}
           </code>
-          <CopyButton text={connString} />
+          <CopyButton text={connectionString} />
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-2.5">
-        <InfoCell label="Host" value="sequoia-db-prod.internal" />
-        <InfoCell label="Port" value="5432" />
-        <InfoCell label="Database" value="main_v3" />
+      <div className="grid grid-cols-4 gap-2.5">
+        <InfoCell label="Host" value={host} />
+        <InfoCell label="Port" value={port} />
+        <InfoCell label="Database" value={database} />
+        <InfoCell label="User" value={user} />
       </div>
     </section>
   );
@@ -294,7 +321,7 @@ const TOGGLE_SETTINGS = [
   },
 ];
 
-function Toggle({ on, onToggle }) {
+function Toggle({ on, onToggle }: { on: boolean; onToggle: () => void }) {
   return (
     <button
       onClick={onToggle}
@@ -315,11 +342,11 @@ function ProjectSettings() {
   const [toggles, setToggles] = useState(
     TOGGLE_SETTINGS.reduce(
       (acc, s) => ({ ...acc, [s.label]: s.defaultOn }),
-      {},
+      {} as Record<string, boolean>,
     ),
   );
 
-  const flip = (label) =>
+  const flip = (label: string) =>
     setToggles((prev) => ({ ...prev, [label]: !prev[label] }));
 
   return (
@@ -388,7 +415,7 @@ function SupportCard() {
           </span>
         </div>
         <p className="text-xs text-[#f5f0e8]/70 leading-relaxed mb-4">
-          Dedicated database experts available 24/7 for Sequoia projects.
+          Dedicated database experts available 24/7.
         </p>
         <button className="text-sm font-bold text-white flex items-center gap-1.5 underline underline-offset-4 decoration-[#8ecf9e] decoration-2">
           Open support ticket
@@ -406,177 +433,116 @@ function SupportCard() {
   );
 }
 
-// ── Activity Table ────────────────────────────────────────────────────────────
-const ACTIVITY = [
-  {
-    icon: "update",
-    iconBg: "bg-[#c8e8d0]",
-    iconColor: "text-[#4a7c59]",
-    event: "Schema Migration: v3.4.1",
-    performerInitials: "SC",
-    performerBg: "bg-[#78a886]",
-    performer: "Sarah Chen",
-    time: "2 hours ago",
-    status: "Success",
-  },
-  {
-    icon: "backup",
-    iconBg: "bg-[#f0e8db]",
-    iconColor: "text-[#6b6358]",
-    event: "Automated Snapshot",
-    performer: "System Process",
-    isSystem: true,
-    time: "02:00 AM",
-    status: "Stored",
-  },
-  {
-    icon: "key",
-    iconBg: "bg-[#f8e0a8]",
-    iconColor: "text-[#705c30]",
-    event: "Key Rotation Initiated",
-    performerInitials: "MA",
-    performerBg: "bg-[#c4a66a]",
-    performer: "Marcus Aurelius",
-    time: "Yesterday",
-    status: "Success",
-  },
-];
-
-function ActivityTable() {
-  return (
-    <section className="mt-8">
-      <h3 className="font-serif text-xl font-bold text-[#2e3230] mb-4">
-        Recent Activity
-      </h3>
-      <div className="bg-white rounded-xl border border-[#c4c8bc]/30 overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-[#f5f1ea] border-b border-[#c4c8bc]/25">
-            <tr>
-              {["Event", "Performed By", "Time", "Status"].map((h) => (
-                <th
-                  key={h}
-                  className={`px-5 py-3.5 text-[10px] font-black text-[#4a4e4a] uppercase tracking-widest ${
-                    h === "Status" ? "text-right" : ""
-                  }`}
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#c4c8bc]/15">
-            {ACTIVITY.map(
-              ({
-                icon,
-                iconBg,
-                iconColor,
-                event,
-                performerInitials,
-                performerBg,
-                performer,
-                isSystem,
-                time,
-                status,
-              }) => (
-                <tr
-                  key={event}
-                  className="hover:bg-[#faf6f0] transition-colors"
-                >
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-2.5">
-                      <div
-                        className={`w-8 h-8 rounded-full ${iconBg} flex items-center justify-center flex-shrink-0`}
-                      >
-                        <span
-                          className={`material-symbols-outlined text-[15px] ${iconColor}`}
-                        >
-                          {icon}
-                        </span>
-                      </div>
-                      <span className="text-sm font-bold text-[#2e3230]">
-                        {event}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    {isSystem ? (
-                      <span className="text-sm text-[#4a4e4a] italic">
-                        {performer}
-                      </span>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-6 h-6 rounded-full ${performerBg} flex items-center justify-center text-white text-[10px] font-bold`}
-                        >
-                          {performerInitials}
-                        </div>
-                        <span className="text-sm text-[#2e3230]">
-                          {performer}
-                        </span>
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-5 py-3.5 text-sm text-[#4a4e4a]">{time}</td>
-                  <td className="px-5 py-3.5 text-right">
-                    <span className="inline-block bg-[#c8e8d0]/60 text-[#2a6038] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">
-                      {status}
-                    </span>
-                  </td>
-                </tr>
-              ),
-            )}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function ProjectDetails() {
+  const params = useParams();
+  const pId = params?.pId as string;
+  const { token } = useAuth();
+
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProject = useCallback(async () => {
+    if (!token || !pId) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE}/projects/${pId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setProject(data.data ?? data);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load project.");
+    } finally {
+      setLoading(false);
+    }
+  }, [token, pId]);
+
+  useEffect(() => {
+    fetchProject();
+  }, [fetchProject]);
+
   return (
     <div className="flex h-screen bg-[#faf6f0] text-[#2e3230] font-sans overflow-hidden">
-      {/* Google Fonts + Material Symbols — add these to your index.html <head> instead */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400..900;1,400..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0&display=swap');
         .material-symbols-outlined { font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24; }
         .font-serif { font-family: 'Literata', serif; }
         body { font-family: 'Nunito Sans', sans-serif; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
 
       <Sidebar />
 
       <div className="flex flex-col flex-1 overflow-hidden">
-        <TopBar />
+        <TopBar projectName={project?.name ?? ""} />
 
         <main className="flex-1 overflow-y-auto p-7">
-          <h2 className="font-serif text-3xl font-black text-[#2e3230] mb-1.5">
-            Sequoia Main DB
-          </h2>
-          <p className="text-[#4a4e4a] text-sm leading-relaxed mb-7 max-w-2xl">
-            Enterprise-grade PostgreSQL cluster serving regional logistics data.
-            Scaled for high availability and low latency.
-          </p>
+          {loading && (
+            <div className="flex items-center justify-center h-64 gap-3 text-[#6b6358]">
+              <span
+                className="material-symbols-outlined text-[28px]"
+                style={{ animation: "spin 1s linear infinite" }}
+              >
+                autorenew
+              </span>
+              Loading project…
+            </div>
+          )}
 
-          <div className="grid grid-cols-[1fr_300px] gap-5">
-            {/* Left column */}
-            <div className="flex flex-col gap-5">
-              <ConnectionInfo />
-              <div className="grid grid-cols-2 gap-5">
-                <ComputeUsage />
-                <StorageCapacity />
+          {!loading && error && (
+            <div className="flex flex-col items-center justify-center h-64 gap-3 text-[#b91c1c]">
+              <span className="material-symbols-outlined text-[40px]">
+                error_outline
+              </span>
+              <p className="text-sm font-semibold">{error}</p>
+              <button
+                onClick={fetchProject}
+                className="text-[#4a7c59] font-bold text-sm underline"
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!loading && !error && project && (
+            <>
+              <h2 className="font-serif text-3xl font-black text-[#2e3230] mb-1.5">
+                {project.name}
+              </h2>
+              <p className="text-[#4a4e4a] text-sm leading-relaxed mb-7 max-w-2xl">
+                Schema:{" "}
+                <span className="font-mono text-[#4a7c59]">
+                  {project.schema_name}
+                </span>
+                {project.created_at && (
+                  <>
+                    {" · "}Created{" "}
+                    {new Date(project.created_at).toLocaleDateString()}
+                  </>
+                )}
+              </p>
+
+              <div className="grid grid-cols-[1fr_300px] gap-5">
+                <div className="flex flex-col gap-5">
+                  <ConnectionInfo connectionString={project.connection_string} />
+                  <div className="grid grid-cols-2 gap-5">
+                    <ComputeUsage />
+                    <StorageCapacity />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <ProjectSettings />
+                  <SupportCard />
+                </div>
               </div>
-            </div>
-
-            {/* Right column */}
-            <div className="flex flex-col gap-4">
-              <ProjectSettings />
-              <SupportCard />
-            </div>
-          </div>
-
-          <ActivityTable />
+            </>
+          )}
         </main>
       </div>
     </div>
