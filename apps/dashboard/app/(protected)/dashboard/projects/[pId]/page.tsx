@@ -5,6 +5,299 @@ import { useAuth } from "@myauth/next";
 
 const API_BASE = "http://localhost:5082/api/v1";
 
+// ── Tables Section ────────────────────────────────────────────────────────────
+interface TableRow {
+  tablename: string;
+}
+
+function TablesList({
+  schemaName,
+  token,
+}: {
+  schemaName: string;
+  token: string | null;
+}) {
+  const [tables, setTables] = useState<TableRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedTable, setSelectedTable] = useState<string | null>(null);
+
+  const fetchTables = useCallback(async () => {
+    if (!token || !schemaName) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_BASE}/projects/${schemaName}/tables`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setTables(data.data.tables ?? []);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load tables.");
+    } finally {
+      setLoading(false);
+    }
+  }, [token, schemaName]);
+
+  useEffect(() => {
+    fetchTables();
+  }, [fetchTables]);
+
+  return (
+    <section className="mt-7">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="material-symbols-outlined text-[#4a7c59] text-[18px]">
+          table_chart
+        </span>
+        <h3 className="font-serif text-base font-bold text-[#2e3230]">
+          Tables
+        </h3>
+        {!loading && !error && (
+          <span className="bg-[#eae6de] text-[#4a4e4a] text-[10px] font-black px-2 py-0.5 rounded-full">
+            {tables.length}
+          </span>
+        )}
+      </div>
+
+      {loading && (
+        <div className="flex items-center gap-2 text-[#74796e] text-sm py-6">
+          <span
+            className="material-symbols-outlined text-[18px]"
+            style={{ animation: "spin 1s linear infinite" }}
+          >
+            autorenew
+          </span>
+          Loading tables…
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="flex items-center gap-2 text-red-600 text-sm py-4">
+          <span className="material-symbols-outlined text-[16px]">
+            error_outline
+          </span>
+          {error}
+          <button
+            onClick={fetchTables}
+            className="text-[#4a7c59] font-bold underline ml-1"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && tables.length === 0 && (
+        <div className="bg-[#f5f1ea] rounded-xl border border-[#c4c8bc]/30 p-8 text-center">
+          <span className="material-symbols-outlined text-[#c4c8bc] text-[40px] block mb-2">
+            table_chart
+          </span>
+          <p className="text-sm text-[#74796e] font-medium">No tables yet</p>
+          <p className="text-xs text-[#a0a49a] mt-1">
+            Create your first table to get started.
+          </p>
+        </div>
+      )}
+
+      {!loading && !error && tables.length > 0 && (
+        <div className="flex gap-5">
+          {/* Table list */}
+          <div className="w-56 flex-shrink-0 flex flex-col gap-1.5">
+            {tables.map(({ tablename }) => (
+              <button
+                key={tablename}
+                onClick={() =>
+                  setSelectedTable((t) => (t === tablename ? null : tablename))
+                }
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-lg text-left text-sm font-semibold transition-all w-full ${
+                  selectedTable === tablename
+                    ? "bg-[#4a7c59] text-white shadow-sm"
+                    : "bg-[#f5f1ea] text-[#2e3230] hover:bg-[#eae6de] border border-[#c4c8bc]/30"
+                }`}
+              >
+                <span className="material-symbols-outlined text-[16px] flex-shrink-0">
+                  table_rows
+                </span>
+                <span className="truncate">{tablename}</span>
+                {selectedTable === tablename && (
+                  <span className="material-symbols-outlined text-[14px] ml-auto">
+                    chevron_right
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {/* Data panel */}
+          <div className="flex-1 min-w-0">
+            {selectedTable ? (
+              <TableData
+                schemaName={schemaName}
+                tableName={selectedTable}
+                token={token}
+              />
+            ) : (
+              <div className="bg-[#f5f1ea] rounded-xl border border-[#c4c8bc]/30 h-full min-h-[160px] flex flex-col items-center justify-center gap-2 text-[#a0a49a]">
+                <span className="material-symbols-outlined text-[32px]">
+                  touch_app
+                </span>
+                <p className="text-sm font-medium">
+                  Select a table to view its data
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function TableData({
+  schemaName,
+  tableName,
+  token,
+}: {
+  schemaName: string;
+  tableName: string;
+  token: string | null;
+}) {
+  const [rows, setRows] = useState<Record<string, unknown>[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!token) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(
+        `${API_BASE}/data/${schemaName}/${tableName}?limit=100`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (!res.ok) throw new Error(`Error ${res.status}`);
+      const data = await res.json();
+      setRows(Array.isArray(data) ? data : (data.data ?? []));
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load data.");
+    } finally {
+      setLoading(false);
+    }
+  }, [token, schemaName, tableName]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
+
+  return (
+    <div className="bg-[#f5f1ea] rounded-xl border border-[#c4c8bc]/30 overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#c4c8bc]/30">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-[#4a7c59] text-[16px]">
+            table_rows
+          </span>
+          <span className="text-sm font-bold text-[#2e3230] font-mono">
+            {tableName}
+          </span>
+          {!loading && !error && (
+            <span className="bg-[#c8e8d0] text-[#2a6038] text-[10px] font-black px-2 py-0.5 rounded-full">
+              {rows.length} row{rows.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={fetchData}
+          className="p-1.5 text-[#6b6358] hover:bg-[#eae6de] rounded-lg transition-colors"
+          title="Refresh"
+        >
+          <span className="material-symbols-outlined text-[16px]">refresh</span>
+        </button>
+      </div>
+
+      {loading && (
+        <div className="flex items-center gap-2 text-[#74796e] text-sm p-6">
+          <span
+            className="material-symbols-outlined text-[18px]"
+            style={{ animation: "spin 1s linear infinite" }}
+          >
+            autorenew
+          </span>
+          Loading data…
+        </div>
+      )}
+
+      {!loading && error && (
+        <div className="flex items-center gap-2 text-red-600 text-sm p-4">
+          <span className="material-symbols-outlined text-[16px]">
+            error_outline
+          </span>
+          {error}
+          <button
+            onClick={fetchData}
+            className="text-[#4a7c59] font-bold underline ml-1"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!loading && !error && rows.length === 0 && (
+        <div className="p-8 text-center">
+          <span className="material-symbols-outlined text-[#c4c8bc] text-[36px] block mb-2">
+            inbox
+          </span>
+          <p className="text-sm text-[#74796e] font-medium">No rows found</p>
+        </div>
+      )}
+
+      {!loading && !error && rows.length > 0 && (
+        <div className="overflow-x-auto max-h-[420px] overflow-y-auto">
+          <table className="w-full text-sm border-collapse">
+            <thead className="sticky top-0 z-10">
+              <tr className="bg-[#eae6de]">
+                {columns.map((col) => (
+                  <th
+                    key={col}
+                    className="text-left px-4 py-2.5 text-[10px] font-black text-[#705c30] uppercase tracking-widest whitespace-nowrap border-b border-[#c4c8bc]/40"
+                  >
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr
+                  key={i}
+                  className={`border-b border-[#c4c8bc]/20 hover:bg-[#eae6de]/50 transition-colors ${
+                    i % 2 === 0 ? "bg-transparent" : "bg-[#f5f1ea]/50"
+                  }`}
+                >
+                  {columns.map((col) => (
+                    <td
+                      key={col}
+                      className="px-4 py-2.5 text-[#2e3230] font-mono text-xs whitespace-nowrap max-w-[200px] truncate"
+                      title={String(row[col] ?? "")}
+                    >
+                      {row[col] === null || row[col] === undefined ? (
+                        <span className="text-[#a0a49a] italic">null</span>
+                      ) : (
+                        String(row[col])
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface Project {
   id: string;
   name: string;
@@ -585,7 +878,7 @@ export default function ProjectDetails() {
                 </div>
               )}
 
-              <div className="grid grid-cols-[1fr_300px] gap-5">
+              <div className="grid gap-5">
                 <div className="flex flex-col gap-5">
                   <ConnectionInfo
                     connectionString={project.connection_string}
@@ -595,12 +888,9 @@ export default function ProjectDetails() {
                     <StorageCapacity />
                   </div>
                 </div>
-
-                <div className="flex flex-col gap-4">
-                  <ProjectSettings />
-                  <SupportCard />
-                </div>
               </div>
+
+              <TablesList schemaName={project.schema_name} token={token} />
             </>
           )}
         </main>
