@@ -121,7 +121,8 @@ function InfoCell({ label, value }: { label: string; value: string }) {
 }
 
 function ConnectionInfo({ connectionString }: { connectionString: string }) {
-  const { host, port, database, user } = parseConnectionString(connectionString);
+  const { host, port, database, user } =
+    parseConnectionString(connectionString);
 
   return (
     <section className="bg-[#f5f1ea] rounded-xl p-5 border border-[#c4c8bc]/30">
@@ -502,7 +503,10 @@ export default function ProjectDetails() {
   }, [fetchProject]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden text-[#2e3230]" style={{ fontFamily: "'Nunito Sans', sans-serif" }}>
+    <div
+      className="flex flex-col flex-1 overflow-hidden text-[#2e3230]"
+      style={{ fontFamily: "'Nunito Sans', sans-serif" }}
+    >
       {showDeleteModal && project && (
         <DeleteProjectModal
           projectName={project.name}
@@ -516,8 +520,6 @@ export default function ProjectDetails() {
       )}
 
       <div className="flex flex-col flex-1 overflow-hidden">
-        <TopBar projectName={project?.name ?? ""} />
-
         <main className="flex-1 overflow-y-auto p-7">
           {loading && (
             <div className="flex items-center justify-center h-64 gap-3 text-[#6b6358]">
@@ -585,7 +587,9 @@ export default function ProjectDetails() {
 
               <div className="grid grid-cols-[1fr_300px] gap-5">
                 <div className="flex flex-col gap-5">
-                  <ConnectionInfo connectionString={project.connection_string} />
+                  <ConnectionInfo
+                    connectionString={project.connection_string}
+                  />
                   <div className="grid grid-cols-2 gap-5">
                     <ComputeUsage />
                     <StorageCapacity />

@@ -1,4 +1,5 @@
 "use client";
+import { UserButton } from "@myauth/next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -216,6 +217,15 @@ export default function DashboardLayout({
             overflow: "hidden",
           }}
         >
+          <header
+            className="flex justify-end items-center px-6 pt-3 w-full border-b border-stone-100 sticky top-0 z-10"
+            style={{
+              background: "rgba(250,246,240,0.8)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <UserButton />
+          </header>
           {children}
         </div>
       </div>

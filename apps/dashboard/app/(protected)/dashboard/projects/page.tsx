@@ -540,12 +540,32 @@ function CreateProjectDialog({
                 }}
               >
                 {[
-                  { label: "18-24 chars", ok: password.length >= 18 && password.length <= 24 },
-                  { label: "2+ Uppercase", ok: (password.match(/[A-Z]/g) ?? []).length >= 2 },
-                  { label: "2+ Lowercase", ok: (password.match(/[a-z]/g) ?? []).length >= 2 },
-                  { label: "2+ Digits", ok: (password.match(/\d/g) ?? []).length >= 2 },
-                  { label: "2+ Special (_-.!)", ok: (password.match(/[_\-.!]/g) ?? []).length >= 2 },
-                  { label: "Safe chars only", ok: password.length > 0 && /^[A-Za-z0-9_\-.!]+$/.test(password) },
+                  {
+                    label: "18-24 chars",
+                    ok: password.length >= 18 && password.length <= 24,
+                  },
+                  {
+                    label: "2+ Uppercase",
+                    ok: (password.match(/[A-Z]/g) ?? []).length >= 2,
+                  },
+                  {
+                    label: "2+ Lowercase",
+                    ok: (password.match(/[a-z]/g) ?? []).length >= 2,
+                  },
+                  {
+                    label: "2+ Digits",
+                    ok: (password.match(/\d/g) ?? []).length >= 2,
+                  },
+                  {
+                    label: "2+ Special (_-.!)",
+                    ok: (password.match(/[_\-.!]/g) ?? []).length >= 2,
+                  },
+                  {
+                    label: "Safe chars only",
+                    ok:
+                      password.length > 0 &&
+                      /^[A-Za-z0-9_\-.!]+$/.test(password),
+                  },
                 ].map(({ label, ok }) => (
                   <span
                     key={label}
@@ -842,535 +862,329 @@ export default function MyDBProjects() {
           fontFamily: "'Nunito Sans', sans-serif",
         }}
       >
-          {/* Top bar */}
-          <header
+        {/* Top bar */}
+
+        {/* Scrollable content */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            paddingLeft: 32,
+            paddingRight: 32,
+            paddingTop: 20,
+            maxWidth: 1280,
+            width: "100%",
+            margin: "0 auto",
+            alignSelf: "stretch",
+          }}
+        >
+          {/* Hero */}
+          <div
             style={{
               display: "flex",
               justifyContent: "space-between",
-              alignItems: "center",
-              padding: "0 32px",
-              height: 64,
-              backgroundColor: "#faf6f0",
-              borderBottom: "1px solid #e7e5e4",
-              zIndex: 10,
-              flexShrink: 0,
+              alignItems: "flex-end",
+              marginBottom: 40,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-              <h1
+            <div>
+              <h2
                 className="font-serif"
                 style={{
-                  color: "#4a7c59",
-                  fontSize: 18,
-                  fontWeight: 700,
+                  fontSize: 36,
+                  fontWeight: 900,
+                  color: "#2e3230",
                   letterSpacing: "-0.02em",
+                  marginBottom: 8,
                 }}
               >
-                Projects
-              </h1>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                {["Overview", "Activity"].map((tab) => (
-                  <a
-                    key={tab}
-                    href="#"
-                    onClick={() => setActiveTab(tab)}
-                    style={{
-                      color: activeTab === tab ? "#4a7c59" : "#6b6358",
-                      fontWeight: activeTab === tab ? 700 : 500,
-                      borderBottom:
-                        activeTab === tab
-                          ? "2px solid #4a7c59"
-                          : "2px solid transparent",
-                      textDecoration: "none",
-                      fontSize: 14,
-                      padding: "4px 8px",
-                      borderRadius: activeTab !== tab ? 8 : 0,
-                      transition: "all 0.15s",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (activeTab !== tab)
-                        e.currentTarget.style.backgroundColor = "#f5f5f4";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (activeTab !== tab)
-                        e.currentTarget.style.backgroundColor = "transparent";
-                    }}
-                  >
-                    {tab}
-                  </a>
-                ))}
-              </div>
+                Project Workspace
+              </h2>
+              <p style={{ color: "#6b6358", fontWeight: 500, maxWidth: 420 }}>
+                Manage your distributed database clusters and cloud resources
+                across all regions.
+              </p>
             </div>
+            <CreateButton onClick={() => setDialogOpen(true)} />
+          </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div style={{ position: "relative" }}>
-                <Icon
-                  name="search"
+          {/* Main Grid */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr 280px",
+              gap: 24,
+              marginBottom: 64,
+            }}
+          >
+            {/* Project cards - 3 col span */}
+            <div
+              style={{
+                gridColumn: "span 3",
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 24,
+              }}
+            >
+              {projectsLoading && (
+                <div
                   style={{
-                    position: "absolute",
-                    left: 12,
-                    top: "50%",
-                    transform: "translateY(-50%)",
+                    gridColumn: "span 3",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 256,
                     color: "#a8a29e",
-                    fontSize: 18,
-                    pointerEvents: "none",
+                    gap: 12,
                   }}
-                />
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search projects..."
-                  style={{
-                    backgroundColor: "#f5f1ea",
-                    border: "none",
-                    borderRadius: 9999,
-                    padding: "8px 16px 8px 40px",
-                    fontSize: 14,
-                    width: 256,
-                    outline: "none",
-                    color: "#2e3230",
-                  }}
-                />
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                {["notifications", "help", "settings"].map((icon) => (
-                  <button
-                    key={icon}
+                >
+                  <Icon
+                    name="autorenew"
                     style={{
-                      padding: 8,
-                      borderRadius: 8,
+                      fontSize: 24,
+                      animation: "spin 1s linear infinite",
+                    }}
+                  />
+                  Loading projects…
+                </div>
+              )}
+              {!projectsLoading && projectsError && (
+                <div
+                  style={{
+                    gridColumn: "span 3",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 120,
+                    color: "#b91c1c",
+                    fontSize: 14,
+                    gap: 8,
+                    flexDirection: "column",
+                  }}
+                >
+                  <Icon
+                    name="error_outline"
+                    style={{ fontSize: 32, color: "#b91c1c" }}
+                  />
+                  {projectsError}
+                  <button
+                    onClick={fetchProjects}
+                    style={{
+                      marginTop: 8,
+                      fontSize: 13,
+                      color: "#4a7c59",
                       background: "none",
                       border: "none",
                       cursor: "pointer",
-                      color: "#6b6358",
+                      fontWeight: 700,
+                      textDecoration: "underline",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.backgroundColor = "#f0ece4")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.backgroundColor = "transparent")
-                    }
                   >
-                    <Icon name={icon} />
+                    Retry
                   </button>
+                </div>
+              )}
+              {!projectsLoading &&
+                !projectsError &&
+                filtered.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
                 ))}
-              </div>
-            </div>
-          </header>
-
-          {/* Scrollable content */}
-          <div
-            style={{
-              flex: 1,
-              overflowY: "auto",
-              padding: 32,
-              maxWidth: 1280,
-              width: "100%",
-              margin: "0 auto",
-              alignSelf: "stretch",
-            }}
-          >
-            {/* Hero */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-end",
-                marginBottom: 40,
-              }}
-            >
-              <div>
-                <h2
-                  className="font-serif"
-                  style={{
-                    fontSize: 36,
-                    fontWeight: 900,
-                    color: "#2e3230",
-                    letterSpacing: "-0.02em",
-                    marginBottom: 8,
-                  }}
-                >
-                  Project Workspace
-                </h2>
-                <p style={{ color: "#6b6358", fontWeight: 500, maxWidth: 420 }}>
-                  Manage your distributed database clusters and cloud resources
-                  across all regions.
-                </p>
-              </div>
-              <CreateButton onClick={() => setDialogOpen(true)} />
+              {!projectsLoading &&
+                !projectsError &&
+                filtered.length === 0 &&
+                search && (
+                  <div
+                    style={{
+                      gridColumn: "span 3",
+                      color: "#a8a29e",
+                      fontSize: 14,
+                      padding: "32px 0",
+                    }}
+                  >
+                    No projects match "{search}".
+                  </div>
+                )}
+              <GhostCard onClick={() => setDialogOpen(true)} />
             </div>
 
-            {/* Main Grid */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr 1fr 280px",
-                gap: 24,
-                marginBottom: 64,
-              }}
-            >
-              {/* Project cards - 3 col span */}
+            {/* Right sidebar bento */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {/* Usage */}
               <div
                 style={{
-                  gridColumn: "span 3",
-                  display: "grid",
-                  gridTemplateColumns: "repeat(3, 1fr)",
-                  gap: 24,
+                  backgroundColor: "#78a886",
+                  padding: 24,
+                  borderRadius: 12,
+                  position: "relative",
+                  overflow: "hidden",
+                  height: 192,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
                 }}
               >
-                {projectsLoading && (
-                  <div
-                    style={{
-                      gridColumn: "span 3",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: 256,
-                      color: "#a8a29e",
-                      gap: 12,
-                    }}
-                  >
-                    <Icon
-                      name="autorenew"
-                      style={{
-                        fontSize: 24,
-                        animation: "spin 1s linear infinite",
-                      }}
-                    />
-                    Loading projects…
-                  </div>
-                )}
-                {!projectsLoading && projectsError && (
-                  <div
-                    style={{
-                      gridColumn: "span 3",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: 120,
-                      color: "#b91c1c",
-                      fontSize: 14,
-                      gap: 8,
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Icon
-                      name="error_outline"
-                      style={{ fontSize: 32, color: "#b91c1c" }}
-                    />
-                    {projectsError}
-                    <button
-                      onClick={fetchProjects}
-                      style={{
-                        marginTop: 8,
-                        fontSize: 13,
-                        color: "#4a7c59",
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        fontWeight: 700,
-                        textDecoration: "underline",
-                      }}
-                    >
-                      Retry
-                    </button>
-                  </div>
-                )}
-                {!projectsLoading &&
-                  !projectsError &&
-                  filtered.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))}
-                {!projectsLoading &&
-                  !projectsError &&
-                  filtered.length === 0 &&
-                  search && (
-                    <div
-                      style={{
-                        gridColumn: "span 3",
-                        color: "#a8a29e",
-                        fontSize: 14,
-                        padding: "32px 0",
-                      }}
-                    >
-                      No projects match "{search}".
-                    </div>
-                  )}
-                <GhostCard onClick={() => setDialogOpen(true)} />
-              </div>
-
-              {/* Right sidebar bento */}
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 24 }}
-              >
-                {/* Usage */}
-                <div
-                  style={{
-                    backgroundColor: "#78a886",
-                    padding: 24,
-                    borderRadius: 12,
-                    position: "relative",
-                    overflow: "hidden",
-                    height: 192,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <div style={{ position: "relative", zIndex: 1 }}>
-                    <h4
-                      style={{
-                        fontSize: 18,
-                        fontWeight: 700,
-                        color: "#002110",
-                        marginBottom: 8,
-                      }}
-                    >
-                      Usage Limit
-                    </h4>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-end",
-                        gap: 4,
-                        marginBottom: 16,
-                      }}
-                    >
-                      <span
-                        className="font-serif"
-                        style={{
-                          fontSize: 30,
-                          fontWeight: 900,
-                          color: "#002110",
-                        }}
-                      >
-                        74%
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 14,
-                          color: "rgba(0,33,16,0.8)",
-                          paddingBottom: 4,
-                        }}
-                      >
-                        of Monthly Quota
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        width: "100%",
-                        backgroundColor: "rgba(0,33,16,0.2)",
-                        height: 8,
-                        borderRadius: 9999,
-                        marginBottom: 4,
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: "74%",
-                          height: "100%",
-                          backgroundColor: "#ffffff",
-                          borderRadius: 9999,
-                        }}
-                      />
-                    </div>
-                    <p style={{ fontSize: 10, color: "rgba(0,33,16,0.7)" }}>
-                      Estimated reset in 12 days
-                    </p>
-                  </div>
-                  <div
-                    style={{
-                      position: "absolute",
-                      right: -16,
-                      bottom: -16,
-                      opacity: 0.1,
-                    }}
-                  >
-                    <Icon name="speed" filled style={{ fontSize: 120 }} />
-                  </div>
-                </div>
-
-                {/* Insights */}
-                <div
-                  style={{
-                    backgroundColor: "#f0ece4",
-                    padding: 24,
-                    borderRadius: 12,
-                    border: "1px solid #f5f5f4",
-                  }}
-                >
+                <div style={{ position: "relative", zIndex: 1 }}>
                   <h4
                     style={{
+                      fontSize: 18,
                       fontWeight: 700,
-                      color: "#292524",
-                      marginBottom: 16,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
+                      color: "#002110",
+                      marginBottom: 8,
                     }}
                   >
-                    <Icon name="auto_awesome" style={{ color: "#705c30" }} />
-                    Insights
+                    Usage Limit
                   </h4>
                   <div
                     style={{
                       display: "flex",
-                      flexDirection: "column",
-                      gap: 16,
+                      alignItems: "flex-end",
+                      gap: 4,
+                      marginBottom: 16,
                     }}
                   >
-                    {INSIGHTS.map((ins, i) => (
-                      <div key={i} style={{ display: "flex", gap: 12 }}>
-                        <div
-                          style={{
-                            width: 4,
-                            minHeight: 32,
-                            backgroundColor: ins.color,
-                            borderRadius: 9999,
-                            flexShrink: 0,
-                          }}
-                        />
-                        <p
-                          style={{
-                            fontSize: 12,
-                            color: "#57534e",
-                            lineHeight: 1.6,
-                          }}
-                        >
-                          <span style={{ fontWeight: 700 }}>{ins.label}</span>{" "}
-                          {ins.text}
-                        </p>
-                      </div>
-                    ))}
+                    <span
+                      className="font-serif"
+                      style={{
+                        fontSize: 30,
+                        fontWeight: 900,
+                        color: "#002110",
+                      }}
+                    >
+                      74%
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 14,
+                        color: "rgba(0,33,16,0.8)",
+                        paddingBottom: 4,
+                      }}
+                    >
+                      of Monthly Quota
+                    </span>
                   </div>
+                  <div
+                    style={{
+                      width: "100%",
+                      backgroundColor: "rgba(0,33,16,0.2)",
+                      height: 8,
+                      borderRadius: 9999,
+                      marginBottom: 4,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "74%",
+                        height: "100%",
+                        backgroundColor: "#ffffff",
+                        borderRadius: 9999,
+                      }}
+                    />
+                  </div>
+                  <p style={{ fontSize: 10, color: "rgba(0,33,16,0.7)" }}>
+                    Estimated reset in 12 days
+                  </p>
                 </div>
-
-                <GreenPromo />
-              </div>
-            </div>
-
-            {/* Recent Deployments */}
-            <section>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 24,
-                }}
-              >
-                <h3
-                  className="font-serif"
-                  style={{ fontSize: 24, fontWeight: 700, color: "#2e3230" }}
-                >
-                  Recent Deployments
-                </h3>
-                <button
+                <div
                   style={{
-                    color: "#4a7c59",
-                    fontWeight: 700,
-                    fontSize: 14,
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
+                    position: "absolute",
+                    right: -16,
+                    bottom: -16,
+                    opacity: 0.1,
                   }}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.textDecoration = "underline")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.textDecoration = "none")
-                  }
                 >
-                  View All Deployments
-                </button>
+                  <Icon name="speed" filled style={{ fontSize: 120 }} />
+                </div>
               </div>
 
+              {/* Insights */}
               <div
                 style={{
                   backgroundColor: "#f0ece4",
+                  padding: 24,
                   borderRadius: 12,
-                  overflow: "hidden",
                   border: "1px solid #f5f5f4",
                 }}
               >
-                <table
+                <h4
                   style={{
-                    width: "100%",
-                    textAlign: "left",
-                    borderCollapse: "collapse",
+                    fontWeight: 700,
+                    color: "#292524",
+                    marginBottom: 16,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
                   }}
                 >
-                  <thead>
-                    <tr
-                      style={{
-                        backgroundColor: "#fafaf9",
-                        borderBottom: "1px solid #f5f5f4",
-                      }}
-                    >
-                      {[
-                        "Instance ID",
-                        "Version",
-                        "Load",
-                        "Uptime",
-                        "Action",
-                      ].map((h) => (
-                        <th
-                          key={h}
-                          style={{
-                            padding: "16px 24px",
-                            fontSize: 10,
-                            fontWeight: 900,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.1em",
-                            color: "#a8a29e",
-                          }}
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {DEPLOYMENTS.map((d, idx) => (
-                      <DeploymentRow
-                        key={d.id}
-                        deployment={d}
-                        isLast={idx === DEPLOYMENTS.length - 1}
+                  <Icon name="auto_awesome" style={{ color: "#705c30" }} />
+                  Insights
+                </h4>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 16,
+                  }}
+                >
+                  {INSIGHTS.map((ins, i) => (
+                    <div key={i} style={{ display: "flex", gap: 12 }}>
+                      <div
+                        style={{
+                          width: 4,
+                          minHeight: 32,
+                          backgroundColor: ins.color,
+                          borderRadius: 9999,
+                          flexShrink: 0,
+                        }}
                       />
-                    ))}
-                  </tbody>
-                </table>
+                      <p
+                        style={{
+                          fontSize: 12,
+                          color: "#57534e",
+                          lineHeight: 1.6,
+                        }}
+                      >
+                        <span style={{ fontWeight: 700 }}>{ins.label}</span>{" "}
+                        {ins.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </section>
-          </div>
-        </main>
 
-        {/* Mobile FAB */}
-        <button
-          onClick={() => setDialogOpen(true)}
-          style={{
-            position: "fixed",
-            bottom: 32,
-            right: 32,
-            width: 56,
-            height: 56,
-            backgroundColor: "#4a7c59",
-            color: "#ffffff",
-            borderRadius: "50%",
-            boxShadow: "0 8px 30px rgba(74,124,89,0.4)",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 30,
-            transition: "transform 0.15s",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-        >
-          <Icon name="add" style={{ fontSize: 30 }} />
-        </button>
+              <GreenPromo />
+            </div>
+          </div>
+
+          {/* Recent Deployments */}
+        </div>
+      </main>
+
+      {/* Mobile FAB */}
+      <button
+        onClick={() => setDialogOpen(true)}
+        style={{
+          position: "fixed",
+          bottom: 32,
+          right: 32,
+          width: 56,
+          height: 56,
+          backgroundColor: "#4a7c59",
+          color: "#ffffff",
+          borderRadius: "50%",
+          boxShadow: "0 8px 30px rgba(74,124,89,0.4)",
+          border: "none",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 30,
+          transition: "transform 0.15s",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      >
+        <Icon name="add" style={{ fontSize: 30 }} />
+      </button>
 
       <CreateProjectDialog
         open={dialogOpen}

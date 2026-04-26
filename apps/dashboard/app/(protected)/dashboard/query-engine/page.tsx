@@ -19,19 +19,119 @@ interface QueryResult {
 
 // ── SQL Syntax Highlighter ─────────────────────────────────────────────────────
 const SQL_KEYWORDS = new Set([
-  "SELECT","FROM","WHERE","INSERT","INTO","UPDATE","DELETE","SET","CREATE","DROP",
-  "TABLE","ALTER","ADD","COLUMN","JOIN","LEFT","RIGHT","INNER","OUTER","FULL",
-  "CROSS","ON","AS","AND","OR","NOT","IN","IS","NULL","LIKE","BETWEEN","ORDER",
-  "BY","GROUP","HAVING","LIMIT","OFFSET","DISTINCT","ALL","UNION","EXCEPT",
-  "INTERSECT","WITH","CASE","WHEN","THEN","ELSE","END","BEGIN","COMMIT",
-  "ROLLBACK","TRANSACTION","VALUES","DEFAULT","PRIMARY","KEY","FOREIGN",
-  "REFERENCES","UNIQUE","CHECK","CONSTRAINT","VIEW","INDEX","RETURNING",
-  "TRUNCATE","TRUE","FALSE","INT","INTEGER","TEXT","VARCHAR","BOOLEAN","BOOL",
-  "FLOAT","DOUBLE","DECIMAL","DATE","TIME","TIMESTAMP","SERIAL","BIGINT",
-  "SMALLINT","CHAR","JSON","JSONB","UUID","ARRAY","ASC","DESC","COALESCE",
-  "NULLIF","CAST","COUNT","SUM","AVG","MAX","MIN","EXISTS","IF","EXPLAIN",
-  "ANALYZE","USING","NATURAL","OVER","PARTITION","WINDOW","FILTER","LATERAL",
-  "CURRENT_TIMESTAMP","NOW","ILIKE","SIMILAR","RETURNING",
+  "SELECT",
+  "FROM",
+  "WHERE",
+  "INSERT",
+  "INTO",
+  "UPDATE",
+  "DELETE",
+  "SET",
+  "CREATE",
+  "DROP",
+  "TABLE",
+  "ALTER",
+  "ADD",
+  "COLUMN",
+  "JOIN",
+  "LEFT",
+  "RIGHT",
+  "INNER",
+  "OUTER",
+  "FULL",
+  "CROSS",
+  "ON",
+  "AS",
+  "AND",
+  "OR",
+  "NOT",
+  "IN",
+  "IS",
+  "NULL",
+  "LIKE",
+  "BETWEEN",
+  "ORDER",
+  "BY",
+  "GROUP",
+  "HAVING",
+  "LIMIT",
+  "OFFSET",
+  "DISTINCT",
+  "ALL",
+  "UNION",
+  "EXCEPT",
+  "INTERSECT",
+  "WITH",
+  "CASE",
+  "WHEN",
+  "THEN",
+  "ELSE",
+  "END",
+  "BEGIN",
+  "COMMIT",
+  "ROLLBACK",
+  "TRANSACTION",
+  "VALUES",
+  "DEFAULT",
+  "PRIMARY",
+  "KEY",
+  "FOREIGN",
+  "REFERENCES",
+  "UNIQUE",
+  "CHECK",
+  "CONSTRAINT",
+  "VIEW",
+  "INDEX",
+  "RETURNING",
+  "TRUNCATE",
+  "TRUE",
+  "FALSE",
+  "INT",
+  "INTEGER",
+  "TEXT",
+  "VARCHAR",
+  "BOOLEAN",
+  "BOOL",
+  "FLOAT",
+  "DOUBLE",
+  "DECIMAL",
+  "DATE",
+  "TIME",
+  "TIMESTAMP",
+  "SERIAL",
+  "BIGINT",
+  "SMALLINT",
+  "CHAR",
+  "JSON",
+  "JSONB",
+  "UUID",
+  "ARRAY",
+  "ASC",
+  "DESC",
+  "COALESCE",
+  "NULLIF",
+  "CAST",
+  "COUNT",
+  "SUM",
+  "AVG",
+  "MAX",
+  "MIN",
+  "EXISTS",
+  "IF",
+  "EXPLAIN",
+  "ANALYZE",
+  "USING",
+  "NATURAL",
+  "OVER",
+  "PARTITION",
+  "WINDOW",
+  "FILTER",
+  "LATERAL",
+  "CURRENT_TIMESTAMP",
+  "NOW",
+  "ILIKE",
+  "SIMILAR",
+  "RETURNING",
 ]);
 
 function highlightSql(code: string): string {
@@ -65,7 +165,10 @@ function highlightSql(code: string): string {
     if (code[i] === "'") {
       let j = i + 1;
       while (j < code.length) {
-        if (code[j] === "'" && code[j - 1] !== "\\") { j++; break; }
+        if (code[j] === "'" && code[j - 1] !== "\\") {
+          j++;
+          break;
+        }
         j++;
       }
       out += wrap("color:#16a34a", code.slice(i, j));
@@ -125,7 +228,9 @@ function TopBar() {
             key={icon}
             className="p-1.5 text-[#6b6358] hover:bg-[#f0ece4] rounded-lg transition-colors"
           >
-            <span className="material-symbols-outlined text-[20px]">{icon}</span>
+            <span className="material-symbols-outlined text-[20px]">
+              {icon}
+            </span>
           </button>
         ))}
         <div className="w-8 h-8 rounded-full bg-[#78a886] flex items-center justify-center text-white text-xs font-bold border border-[#c4c8bc]/40">
@@ -261,9 +366,7 @@ function SchemaBrowser({
               {tablesOpen && (
                 <div className="pl-7 space-y-0.5 mt-0.5">
                   {tablesLoading && (
-                    <p className="text-xs text-[#74796e] px-2 py-1">
-                      Loading…
-                    </p>
+                    <p className="text-xs text-[#74796e] px-2 py-1">Loading…</p>
                   )}
                   {!tablesLoading && tables.length === 0 && (
                     <p className="text-xs text-[#74796e] px-2 py-1">
@@ -561,8 +664,8 @@ function ResultsPanel({
                   returned
                 </p>
                 <p>
-                  <span className="text-[#4a7c59]">[INFO]</span> Execution
-                  time: {result.executionTimeMs}ms
+                  <span className="text-[#4a7c59]">[INFO]</span> Execution time:{" "}
+                  {result.executionTimeMs}ms
                 </p>
               </>
             ) : error ? (
@@ -776,9 +879,7 @@ export default function QueryEngine() {
   }, [token, selectedProject, sql]);
 
   return (
-    <div className="flex flex-col flex-1 overflow-hidden bg-[#faf6f0] text-[#2e3230]">
-      <TopBar />
-
+    <div className="flex mt-5  border-t border-green-600 flex-col flex-1 overflow-hidden bg-[#faf6f0] text-[#2e3230]">
       <div className="flex flex-1 overflow-hidden">
         <SchemaBrowser
           projects={projects}
