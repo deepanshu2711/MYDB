@@ -5,10 +5,8 @@ import { usePathname } from "next/navigation";
 const NAV_ITEMS = [
   { icon: "dashboard", label: "Overview", href: "/dashboard" },
   { icon: "folder_shared", label: "Projects", href: "/dashboard/projects" },
-  { icon: "database", label: "Databases", href: "/dashboard/databases" },
   { icon: "monitoring", label: "Analytics", href: "/dashboard/analytics" },
   { icon: "terminal", label: "Query Engine", href: "/dashboard/query-engine" },
-  { icon: "settings", label: "Settings", href: "/dashboard/settings" },
 ];
 
 const FOOTER_ITEMS = [
@@ -54,7 +52,9 @@ function Sidebar() {
         MyDB
       </div>
 
-      <nav style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}>
+      <nav
+        style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4 }}
+      >
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.href);
           return (
