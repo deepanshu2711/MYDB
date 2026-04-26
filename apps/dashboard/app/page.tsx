@@ -96,99 +96,109 @@ const NavBar = () => {
   );
 };
 
-const HeroSection = () => (
-  <section className="relative overflow-hidden pt-20 pb-32 px-8">
-    <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
-      {/* Left column */}
-      <div className="space-y-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#c8e8d0] text-[#2a6038] rounded-full text-sm font-bold">
-          <Icon name="colors_spark" className="text-sm" />
-          Organic Data Management
-        </div>
-        <h1 className="font-['Literata'] text-6xl md:text-7xl font-bold text-[#2e3230] leading-[1.1]">
-          Database as a <span className="text-[#4a7c59]">Service</span>,
-          Simplified.
-        </h1>
-        <p className="text-xl text-[#4a4e4a] leading-relaxed max-w-xl">
-          Experience the warmth of a managed database that grows with you. Scale
-          effortlessly with our earthy, grounded infrastructure designed for
-          modern builders.
-        </p>
-        <div className="flex flex-wrap gap-4 pt-4">
-          <button className="bg-[#4a7c59] text-white px-8 py-4 rounded-lg text-lg font-bold shadow-lg hover:shadow-xl transition-all">
-            Start Your Free Project
-          </button>
-          <button className="border-2 border-[#c4c8bc] text-[#2e3230] px-8 py-4 rounded-lg text-lg font-bold hover:bg-[#f5f1ea] transition-all">
-            View Documentation
-          </button>
-        </div>
-        <div className="flex items-center gap-6 text-[#4a4e4a] pt-8">
-          <div className="flex -space-x-3">
-            <div className="w-10 h-10 rounded-full border-2 border-[#faf6f0] overflow-hidden">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjNTcEh4xkn_C1vzmK-aGjS1UFgreN1MPdqwNsohb6_XeTYWlSNfMdDIcDxBMJXyIDfQCSSoIm72-rkaFAVKKmJ5Ngh2CQZjs-lEr3WimSCq6w4HIYViyP2-N0Tcfd1yr9oxsdKD8ARlDt3RGPXDkKbmZreL0iWqqMnhkg2iydUpZKfHuWNTqM97rkKuUpZkzInXQqtn7W1J300up-QPHGAR8prctBwYYAz8_mZLlKcUMCj5nqy45GJ7xje6wJ37gMEiLBjka0LiU"
-                alt="User"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="w-10 h-10 rounded-full border-2 border-[#faf6f0] overflow-hidden">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3Xqf9OLG3sL9CA3x_y6TBqfcuXh_b0yM8G2cyfN_NWJXCap-EvdHA4PaWv8tBlLkTi-fC-Ky_z5cGOii-GqtsPxkEjP3N4qqYygSuVZ3IGFrqviSq5GvLHA_ZE-_7drdv2Buc1Pe17dUw5isjAwNRNLccZiKY0qmAkAnldojmcpVPiLV_JsulHb-O2Q5u6xFqNkkzT5HK_2yw_j_wRX-MpP6_o8t3kPLM7LM9_jdBeocv7ja3BtGhbTyAvBJ4J1eMWWLWvK5hoOs"
-                alt="User"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="w-10 h-10 rounded-full border-2 border-[#faf6f0] bg-[#c4a66a] flex items-center justify-center text-xs font-bold text-[#554020]">
-              +2k
-            </div>
-          </div>
-          <p className="text-sm">
-            Trusted by over 2,000 growing teams globally.
-          </p>
-        </div>
-      </div>
+const HeroSection = () => {
+  const router = useRouter();
 
-      {/* Right column — code card */}
-      <div className="relative">
-        <div className="absolute inset-0 bg-[#78a886]/20 rounded-[2rem] blur-3xl transform -rotate-6" />
-        <div className="relative bg-[#e4e0d8] rounded-xl p-6 shadow-2xl border border-[#c4c8bc]/30">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-[#b83230]/40" />
-            <div className="w-3 h-3 rounded-full bg-[#705c30]/40" />
-            <div className="w-3 h-3 rounded-full bg-[#4a7c59]/40" />
+  return (
+    <section className="relative overflow-hidden pt-20 pb-32 px-8">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+        {/* Left column */}
+        <div className="space-y-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#c8e8d0] text-[#2a6038] rounded-full text-sm font-bold">
+            <Icon name="colors_spark" className="text-sm" />
+            Organic Data Management
           </div>
-          <div className="space-y-3 font-mono text-sm">
-            <p className="text-[#4a7c59] font-bold">
-              query{" "}
-              <span className="text-[#2e3230]">mydb.cluster_root.growth</span>
-            </p>
-            <p className="text-[#4a4e4a]">{"{"}</p>
-            <p className="pl-4 text-[#4a4e4a]">
-              status: <span className="text-[#705c30]">"healthy"</span>,
-            </p>
-            <p className="pl-4 text-[#4a4e4a]">
-              latency: <span className="text-[#4a7c59]">"14ms"</span>,
-            </p>
-            <p className="pl-4 text-[#4a4e4a]">
-              replication: <span className="text-[#705c30]">"3 nodes"</span>,
-            </p>
-            <p className="pl-4 text-[#4a4e4a] opacity-50">
-              // Scaling naturally...
-            </p>
-            <p className="text-[#4a4e4a]">{"}"}</p>
+          <h1 className="font-['Literata'] text-6xl md:text-7xl font-bold text-[#2e3230] leading-[1.1]">
+            Database as a <span className="text-[#4a7c59]">Service</span>,
+            Simplified.
+          </h1>
+          <p className="text-xl text-[#4a4e4a] leading-relaxed max-w-xl">
+            Experience the warmth of a managed database that grows with you.
+            Scale effortlessly with our earthy, grounded infrastructure designed
+            for modern builders.
+          </p>
+          <div className="flex flex-wrap gap-4 pt-4">
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="bg-[#4a7c59] text-white px-8 py-4 rounded-lg cursor-pointer text-lg font-bold shadow-lg hover:shadow-xl transition-all"
+            >
+              Start Your Free Project
+            </button>
+            <button
+              disabled
+              className="border-2 disabled:opacity-50 disabled:cursor-not-allowed  border-[#c4c8bc] text-[#2e3230] px-8 py-4 rounded-lg text-lg font-bold hover:bg-[#f5f1ea] transition-all"
+            >
+              View Documentation
+            </button>
           </div>
-          <div className="mt-8">
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyNYeRXHN_prK49QgDYkGZdhiybTToG1ft-KOQynkyEOjJB3fkjDnCtmp7pVXyhMvl3vyTRQaoCjXwFV7VIFmLFIe_Qn3iFM3OwYfothWriugkQCI1sG5MYG5MjvjBWVol3SHxBc5JlBIhliE-SR0l66wkESGJBG2bpMHG14HhhPT8ORjv9gAAlyxBDc6TJ1E8297Y7MoOUGcha_rTsr7EafAe4FjKcK7T4JYnkjIGz-IdHQQzJJP0O4CM2EoBPr3ighOd4BrY8mQ"
-              alt="Data Flow"
-              className="w-full rounded-lg shadow-sm"
-            />
+          <div className="flex items-center gap-6 text-[#4a4e4a] pt-8">
+            <div className="flex -space-x-3">
+              <div className="w-10 h-10 rounded-full border-2 border-[#faf6f0] overflow-hidden">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjNTcEh4xkn_C1vzmK-aGjS1UFgreN1MPdqwNsohb6_XeTYWlSNfMdDIcDxBMJXyIDfQCSSoIm72-rkaFAVKKmJ5Ngh2CQZjs-lEr3WimSCq6w4HIYViyP2-N0Tcfd1yr9oxsdKD8ARlDt3RGPXDkKbmZreL0iWqqMnhkg2iydUpZKfHuWNTqM97rkKuUpZkzInXQqtn7W1J300up-QPHGAR8prctBwYYAz8_mZLlKcUMCj5nqy45GJ7xje6wJ37gMEiLBjka0LiU"
+                  alt="User"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="w-10 h-10 rounded-full border-2 border-[#faf6f0] overflow-hidden">
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3Xqf9OLG3sL9CA3x_y6TBqfcuXh_b0yM8G2cyfN_NWJXCap-EvdHA4PaWv8tBlLkTi-fC-Ky_z5cGOii-GqtsPxkEjP3N4qqYygSuVZ3IGFrqviSq5GvLHA_ZE-_7drdv2Buc1Pe17dUw5isjAwNRNLccZiKY0qmAkAnldojmcpVPiLV_JsulHb-O2Q5u6xFqNkkzT5HK_2yw_j_wRX-MpP6_o8t3kPLM7LM9_jdBeocv7ja3BtGhbTyAvBJ4J1eMWWLWvK5hoOs"
+                  alt="User"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="w-10 h-10 rounded-full border-2 border-[#faf6f0] bg-[#c4a66a] flex items-center justify-center text-xs font-bold text-[#554020]">
+                +2k
+              </div>
+            </div>
+            <p className="text-sm">
+              Trusted by over 2,000 growing teams globally.
+            </p>
+          </div>
+        </div>
+
+        {/* Right column — code card */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-[#78a886]/20 rounded-[2rem] blur-3xl transform -rotate-6" />
+          <div className="relative bg-[#e4e0d8] rounded-xl p-6 shadow-2xl border border-[#c4c8bc]/30">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-3 h-3 rounded-full bg-[#b83230]/40" />
+              <div className="w-3 h-3 rounded-full bg-[#705c30]/40" />
+              <div className="w-3 h-3 rounded-full bg-[#4a7c59]/40" />
+            </div>
+            <div className="space-y-3 font-mono text-sm">
+              <p className="text-[#4a7c59] font-bold">
+                query{" "}
+                <span className="text-[#2e3230]">mydb.cluster_root.growth</span>
+              </p>
+              <p className="text-[#4a4e4a]">{"{"}</p>
+              <p className="pl-4 text-[#4a4e4a]">
+                status: <span className="text-[#705c30]">"healthy"</span>,
+              </p>
+              <p className="pl-4 text-[#4a4e4a]">
+                latency: <span className="text-[#4a7c59]">"14ms"</span>,
+              </p>
+              <p className="pl-4 text-[#4a4e4a]">
+                replication: <span className="text-[#705c30]">"3 nodes"</span>,
+              </p>
+              <p className="pl-4 text-[#4a4e4a] opacity-50">
+                // Scaling naturally...
+              </p>
+              <p className="text-[#4a4e4a]">{"}"}</p>
+            </div>
+            <div className="mt-8">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyNYeRXHN_prK49QgDYkGZdhiybTToG1ft-KOQynkyEOjJB3fkjDnCtmp7pVXyhMvl3vyTRQaoCjXwFV7VIFmLFIe_Qn3iFM3OwYfothWriugkQCI1sG5MYG5MjvjBWVol3SHxBc5JlBIhliE-SR0l66wkESGJBG2bpMHG14HhhPT8ORjv9gAAlyxBDc6TJ1E8297Y7MoOUGcha_rTsr7EafAe4FjKcK7T4JYnkjIGz-IdHQQzJJP0O4CM2EoBPr3ighOd4BrY8mQ"
+                alt="Data Flow"
+                className="w-full rounded-lg shadow-sm"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const FeatureCard = ({ children, className = "" }) => (
   <div

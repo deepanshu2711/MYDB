@@ -35,12 +35,11 @@ export class QueryEngineService {
   }
 
   private async runQuery(schema: string, sql: string, params: any[]) {
-    const client: PoolClient = await this.pool.connect();
     const start = Date.now();
 
     try {
-      await client.query(`SET search_path TO "${schema}", public`);
-      const result = await client.query(
+      await this.pool.query(`SET search_path TO "${schema}", public`);
+      const result = await this.pool.query(
         sql,
         params.length ? params : undefined,
       );
@@ -56,8 +55,7 @@ export class QueryEngineService {
         err instanceof Error ? err.message : 'Query execution failed';
       throw new BadRequestException(message);
     } finally {
-      await client.query('RESET search_path').catch(() => {});
-      client.release();
+      await this.pool.query('RESET search_path').catch(() => {});
     }
   }
 }
