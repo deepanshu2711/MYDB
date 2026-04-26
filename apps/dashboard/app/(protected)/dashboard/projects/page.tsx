@@ -1004,7 +1004,9 @@ export default function MyDBProjects() {
                     No projects match "{search}".
                   </div>
                 )}
-              <GhostCard onClick={() => setDialogOpen(true)} />
+              {!projectsLoading && !projectsError && (
+                <GhostCard onClick={() => setDialogOpen(true)} />
+              )}
             </div>
 
             {/* Right sidebar bento */}

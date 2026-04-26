@@ -879,7 +879,7 @@ export default function QueryEngine() {
   }, [token, selectedProject, sql]);
 
   return (
-    <div className="flex mt-5  border-t border-green-600 flex-col flex-1 overflow-hidden bg-[#faf6f0] text-[#2e3230]">
+    <div className="flex mt-5  border-t border-gray-300 flex-col flex-1 overflow-hidden bg-[#faf6f0] text-[#2e3230]">
       <div className="flex flex-1 overflow-hidden">
         <SchemaBrowser
           projects={projects}

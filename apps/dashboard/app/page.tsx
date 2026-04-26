@@ -27,6 +27,7 @@
 // --color-error: #b83230;
 
 "use client";
+import { Database, FolderEdit, MonitorDotIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const Icon = ({ name, className = "" }) => (
@@ -186,13 +187,6 @@ const HeroSection = () => {
               </p>
               <p className="text-[#4a4e4a]">{"}"}</p>
             </div>
-            <div className="mt-8">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyNYeRXHN_prK49QgDYkGZdhiybTToG1ft-KOQynkyEOjJB3fkjDnCtmp7pVXyhMvl3vyTRQaoCjXwFV7VIFmLFIe_Qn3iFM3OwYfothWriugkQCI1sG5MYG5MjvjBWVol3SHxBc5JlBIhliE-SR0l66wkESGJBG2bpMHG14HhhPT8ORjv9gAAlyxBDc6TJ1E8297Y7MoOUGcha_rTsr7EafAe4FjKcK7T4JYnkjIGz-IdHQQzJJP0O4CM2EoBPr3ighOd4BrY8mQ"
-                alt="Data Flow"
-                className="w-full rounded-lg shadow-sm"
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -226,7 +220,7 @@ const FeaturesSection = () => (
         <FeatureCard className="md:col-span-2 flex flex-col md:flex-row gap-8 items-center">
           <div className="flex-1 space-y-4">
             <div className="w-12 h-12 bg-[#78a886]/30 text-[#4a7c59] flex items-center justify-center rounded-lg">
-              <Icon name="forest" />
+              <FolderEdit />
             </div>
             <h3 className="font-['Literata'] text-2xl font-bold">
               Auto-Scaling Clusters
@@ -262,7 +256,7 @@ const FeaturesSection = () => (
         {/* Card 3 */}
         <FeatureCard className="space-y-4">
           <div className="w-12 h-12 bg-[#c4a66a]/30 text-[#705c30] flex items-center justify-center rounded-lg">
-            <Icon name="monitoring" />
+            <MonitorDotIcon />
           </div>
           <h3 className="font-['Literata'] text-2xl font-bold">
             Organic Analytics
@@ -277,7 +271,7 @@ const FeaturesSection = () => (
         <FeatureCard className="md:col-span-2 flex flex-col md:flex-row-reverse gap-8 items-center">
           <div className="flex-1 space-y-4">
             <div className="w-12 h-12 bg-[#c8e8d0]/50 text-[#2a6038] flex items-center justify-center rounded-lg">
-              <Icon name="database" />
+              <Database />
             </div>
             <h3 className="font-['Literata'] text-2xl font-bold">
               Universal Schema
