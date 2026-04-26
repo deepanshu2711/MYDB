@@ -1,1 +1,1 @@
-export { QueryEngine } from "./query-engine";
+export { QueryBuilder } from "./query-engine";

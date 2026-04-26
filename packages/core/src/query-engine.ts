@@ -4,7 +4,7 @@ import { buildSelect } from "./builders/select.builder";
 import { buildUpdate } from "./builders/update.builder";
 import { buildDelete } from "./builders/delete.builder";
 
-export const QueryEngine = {
+export const QueryBuilder = {
   build: (query: QueryRequest): BuiltQuery => {
     switch (query.action) {
       case "insert":

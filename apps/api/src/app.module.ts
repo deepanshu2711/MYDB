@@ -5,6 +5,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { DatabaseModule } from './database/database.module';
 import { TablesModule } from './tables/tables.module';
 import { DataModule } from './data/data.module';
+import { QueryEngineModule } from './query-engine/query-engine.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { EventEmitterModule } from '@nestjs/event-emitter';
@@ -15,6 +16,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     DatabaseModule,
     TablesModule,
     DataModule,
+    QueryEngineModule,
     EventEmitterModule.forRoot(),
   ],
   providers: [

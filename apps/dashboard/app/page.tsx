@@ -26,6 +26,9 @@
 // --color-on-tertiary-container: #554020;
 // --color-error: #b83230;
 
+"use client";
+import { useRouter } from "next/navigation";
+
 const Icon = ({ name, className = "" }) => (
   <span
     className={`material-symbols-outlined ${className}`}
@@ -37,51 +40,61 @@ const Icon = ({ name, className = "" }) => (
   </span>
 );
 
-const NavBar = () => (
-  <nav className="bg-[#faf6f0] border-b border-stone-200/60 shadow-[0_4px_20px_rgba(46,50,48,0.06)] sticky top-0 z-50">
-    <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
-      <div className="flex items-center gap-8">
-        <span className="font-['Literata'] text-2xl font-bold text-[#4a7c59]">
-          MyDB
-        </span>
-        <div className="hidden md:flex gap-6">
-          <a
-            href="#"
-            className="text-[#4a7c59] font-bold border-b-2 border-[#4a7c59] pb-1 text-sm transition-colors duration-200"
+const NavBar = () => {
+  const router = useRouter();
+
+  return (
+    <nav className="bg-[#faf6f0] border-b border-stone-200/60 shadow-[0_4px_20px_rgba(46,50,48,0.06)] sticky top-0 z-50">
+      <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+        <div className="flex items-center gap-8">
+          <span className="font-['Literata'] text-2xl font-bold text-[#4a7c59]">
+            MyDB
+          </span>
+          <div className="hidden md:flex gap-6">
+            <a
+              href="#"
+              className="text-[#4a7c59] font-bold border-b-2 border-[#4a7c59] pb-1 text-sm transition-colors duration-200"
+            >
+              Features
+            </a>
+            <a
+              href="#"
+              className="text-stone-600 hover:text-[#4a7c59] text-sm transition-colors duration-200"
+            >
+              Pricing
+            </a>
+            <a
+              href="#"
+              className="text-stone-600 hover:text-[#4a7c59] text-sm transition-colors duration-200"
+            >
+              Solutions
+            </a>
+            <a
+              href="#"
+              className="text-stone-600 hover:text-[#4a7c59] text-sm transition-colors duration-200"
+            >
+              Docs
+            </a>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="px-5 py-2 text-stone-600 hover:text-[#4a7c59] font-semibold text-sm transition-colors duration-200"
           >
-            Features
-          </a>
-          <a
-            href="#"
-            className="text-stone-600 hover:text-[#4a7c59] text-sm transition-colors duration-200"
+            Sign In
+          </button>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="bg-[#4a7c59] text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-[#3d664a] transition-all duration-200 shadow-sm"
           >
-            Pricing
-          </a>
-          <a
-            href="#"
-            className="text-stone-600 hover:text-[#4a7c59] text-sm transition-colors duration-200"
-          >
-            Solutions
-          </a>
-          <a
-            href="#"
-            className="text-stone-600 hover:text-[#4a7c59] text-sm transition-colors duration-200"
-          >
-            Docs
-          </a>
+            Get Started
+          </button>
         </div>
       </div>
-      <div className="flex items-center gap-4">
-        <button className="px-5 py-2 text-stone-600 hover:text-[#4a7c59] font-semibold text-sm transition-colors duration-200">
-          Sign In
-        </button>
-        <button className="bg-[#4a7c59] text-white px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-[#3d664a] transition-all duration-200 shadow-sm">
-          Get Started
-        </button>
-      </div>
-    </div>
-  </nav>
-);
+    </nav>
+  );
+};
 
 const HeroSection = () => (
   <section className="relative overflow-hidden pt-20 pb-32 px-8">

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Pool } from '@repo/db';
-import { QueryEngine } from '@repo/core';
+import { QueryBuilder } from '@repo/core';
 
 import { CreateDatumDto } from './dto/create-row.dto';
 import { SelectRowDto } from './dto/select-row.dto';
@@ -20,7 +20,7 @@ export class DataService {
 
   async create(dto: CreateDatumDto, schemaName: string, tableName: string) {
     const query = makeInsertQuery(schemaName, tableName, dto.data);
-    const builtQuery = QueryEngine.build(query);
+    const builtQuery = QueryBuilder.build(query);
 
     const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
     return rows;
@@ -32,7 +32,7 @@ export class DataService {
       offset: options.offset,
       filter: options.filters,
     });
-    const builtQuery = QueryEngine.build(query);
+    const builtQuery = QueryBuilder.build(query);
 
     const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
     return rows;
@@ -40,7 +40,7 @@ export class DataService {
 
   async update(dto: UpdateRowDto, schemaName: string, tableName: string) {
     const query = makeUpdateQuery(schemaName, tableName, dto.data, dto.filter);
-    const builtQuery = QueryEngine.build(query);
+    const builtQuery = QueryBuilder.build(query);
 
     const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
     return rows;
@@ -48,7 +48,7 @@ export class DataService {
 
   async remove(dto: DeleteRowDto, schemaName: string, tableName: string) {
     const query = makeDeleteQuery(schemaName, tableName, dto.filter);
-    const builtQuery = QueryEngine.build(query);
+    const builtQuery = QueryBuilder.build(query);
 
     const { rows } = await this.pool.query(builtQuery.sql, builtQuery.params);
     return rows;
