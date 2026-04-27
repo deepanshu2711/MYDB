@@ -6,11 +6,7 @@ import { pool } from '@repo/db';
   providers: [
     {
       provide: 'PG_POOL',
-      useFactory: async () => {
-        //NOTE: test the connection
-        await pool.query('SELECT 1');
-        return pool;
-      },
+      useValue: pool,
     },
   ],
   exports: ['PG_POOL'],
