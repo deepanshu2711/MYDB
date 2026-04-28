@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@myauth/next";
 
-const API_BASE = "http://localhost:5082/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 // ── Tables Section ────────────────────────────────────────────────────────────
 interface TableRow {

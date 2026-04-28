@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useAuth } from "@myauth/next";
 
-const API_BASE = "http://localhost:5082/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 interface Project {
   id: string;

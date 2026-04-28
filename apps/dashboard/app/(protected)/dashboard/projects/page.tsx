@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@myauth/next";
 import { useRouter } from "next/navigation";
 
-const API_BASE = "http://localhost:5082/api/v1";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 
 const DEPLOYMENTS = [
   { id: "db-alpha-902", version: "v14.2.8", load: 45, uptime: "142d 04h" },
