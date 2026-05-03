@@ -28,6 +28,7 @@
 
 "use client";
 import { Database, FolderEdit, MonitorDotIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const Icon = ({ name, className = "" }) => (
@@ -48,9 +49,13 @@ const NavBar = () => {
     <nav className="bg-[#faf6f0] border-b border-stone-200/60 shadow-[0_4px_20px_rgba(46,50,48,0.06)] sticky top-0 z-50">
       <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
         <div className="flex items-center gap-8">
-          <span className="font-['Literata'] text-2xl font-bold text-[#4a7c59]">
-            MyDB
-          </span>
+          <div className="flex items-center gap-1">
+            <Image src={"/x.png"} alt="logo" height={40} width={40} />
+            <span className="font-['Literata'] text-2xl font-bold flex items-center text-[#4a7c59]">
+              MyDB
+            </span>
+          </div>
+
           <div className="hidden md:flex gap-6">
             <a
               href="#"

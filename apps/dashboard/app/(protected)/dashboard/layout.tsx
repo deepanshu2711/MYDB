@@ -1,5 +1,6 @@
 "use client";
 import { UserButton } from "@myauth/next";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -47,9 +48,10 @@ function Sidebar() {
           fontWeight: 700,
           marginBottom: 32,
           fontFamily: "Literata, serif",
-          padding: "0 8px",
         }}
+        className="flex items-start gap-2"
       >
+        <Image src={"/x.png"} alt="logo" height={35} width={35} />
         MyDB
       </div>
 
